@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Historia — Zirathar</title>
+  <meta name="description" content="La historia de Zirathar: el Imperio de Kael, la Llama Oscura y los cinco reinos que nacieron de las cenizas.">
+  <link rel="stylesheet" href="css/estilos.css">
+  <style>
+    .page-header { padding-top: 80px; text-align: center; padding-bottom: 1rem; }
+
+    .historia-container { max-width: 800px; margin: 0 auto; padding: 0 2rem 4rem; }
+
+    .epoca { margin-bottom: 4rem; position: relative; padding-left: 2rem; border-left: 2px solid rgba(200,134,10,0.2); }
+    .epoca::before { content: ''; position: absolute; left: -6px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--dorado); }
+
+    .epoca-titulo { font-family: 'Cinzel Decorative', serif; font-size: 1.4rem; color: var(--dorado); margin-bottom: 0.3rem; }
+    .epoca-fecha { font-size: 0.8rem; opacity: 0.4; margin-bottom: 1.2rem; font-style: italic; }
+    .epoca-texto { font-size: 0.95rem; line-height: 1.8; opacity: 0.85; }
+    .epoca-texto p { margin-bottom: 1rem; }
+
+    .pista { background: rgba(200,134,10,0.06); border-left: 3px solid rgba(200,134,10,0.4); padding: 1rem 1.2rem; margin: 1.5rem 0; border-radius: 0 6px 6px 0; font-style: italic; }
+    .pista::before { content: ''; display: inline-block; width: 12px; height: 12px; margin-right: 8px; background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23c8860a'%3E%3Cpath d='M12 2L1 21h22L12 2zm0 4l7.53 13H4.47L12 6zm-1 5v4h2v-4h-2zm0 6v2h2v-2h-2z'/%3E%3C/svg%3E") center/contain no-repeat; }
+    .pista-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; color: var(--dorado); opacity: 0.7; display: block; margin-bottom: 0.3rem; font-style: normal; }
+
+    .fragmento { background: rgba(139,0,0,0.08); border: 1px solid rgba(139,0,0,0.2); padding: 1.5rem; margin: 2rem 0; border-radius: 8px; text-align: center; }
+    .fragmento-texto { font-family: 'Cinzel', serif; font-size: 1.1rem; color: #c8860a; line-height: 1.6; }
+    .fragmento-autor { font-size: 0.8rem; opacity: 0.5; margin-top: 0.8rem; }
+
+    .misterio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin: 2rem 0; }
+    .misterio-card { background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 1.5rem; text-align: center; transition: all 0.3s; }
+    .misterio-card:hover { border-color: rgba(200,134,10,0.4); transform: translateY(-3px); }
+    .misterio-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+    .misterio-title { font-family: 'Cinzel', serif; font-size: 0.95rem; color: var(--dorado); margin-bottom: 0.5rem; }
+    .misterio-desc { font-size: 0.85rem; opacity: 0.6; }
+
+    .cta-historia { text-align: center; margin-top: 3rem; padding: 2rem; border-top: 1px solid rgba(255,255,255,0.06); }
+    .cta-historia p { opacity: 0.7; margin-bottom: 1rem; }
+
+    @media (max-width: 600px) {
+      .epoca-titulo { font-size: 1.1rem; }
+      .misterio-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Zirathar</a>
+    <ul class="nav-links">
+      <li><a href="razas.html" data-es="Razas" data-en="Races">Razas</a></li>
+      <li><a href="clases.html" data-es="Clases" data-en="Classes">Clases</a></li>
+      <li><a href="mundo.html" data-es="Mundo" data-en="World">Mundo</a></li>
+      <li><a href="historia.html" data-es="Historia" data-en="Lore">Historia</a></li>
+      <li><a href="mapas.html">Mapas</a></li>
+      <li><a href="conectar.html" data-es="Conectar" data-en="Connect">Conectar</a></li>
+    </ul>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="lang-es">ES</button>
+      <button class="lang-btn" id="lang-en">EN</button>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1 class="section-title" data-es="Cronicas de Kael'Zar" data-en="Chronicles of Kael'Zar">Cronicas de Kael'Zar</h1>
+    <div class="section-line"></div>
+    <p style="opacity:0.5; margin-top:0.5rem; font-style:italic;" data-es="Lo que los cinco reinos preferirian olvidar" data-en="What the five kingdoms would rather forget">Lo que los cinco reinos preferirian olvidar</p>
+  </div>
+
+  <div class="historia-container">
+
+    <!-- ═══ ANTES DEL IMPERIO ═══ -->
+    <div class="epoca reveal">
+      <h2 class="epoca-titulo" data-es="I. Antes del Nombre" data-en="I. Before the Name">I. Antes del Nombre</h2>
+      <p class="epoca-fecha" data-es="Antes del ano 0" data-en="Before Year 0">Antes del ano 0</p>
+      <div class="epoca-texto">
+        <p data-es="Antes de que el mundo tuviera un nombre, tenia una herida." data-en="Before the world had a name, it had a wound.">Antes de que el mundo tuviera un nombre, tenia una herida.</p>
+        <p data-es="Cinco pueblos vivian separados, cada uno convencido de que los otros cuatro eran el problema. Los humanos peleaban entre ellos. Los elfos contemplaban la eternidad con la arrogancia de quien cree que el tiempo le pertenece. Los enanos excavaban buscando algo que no sabian nombrar. Los orcos conquistaban todo lo que podian ver. Los drow conspiraban en la oscuridad." data-en="Five peoples lived apart, each convinced the other four were the problem. Humans fought among themselves. Elves contemplated eternity with the arrogance of those who believe time belongs to them. Dwarves dug searching for something they couldn't name. Orcs conquered everything in sight. Drow conspired in the dark.">Cinco pueblos vivian separados, cada uno convencido de que los otros cuatro eran el problema. Los humanos peleaban entre ellos. Los elfos contemplaban la eternidad con la arrogancia de quien cree que el tiempo le pertenece. Los enanos excavaban buscando algo que no sabian nombrar. Los orcos conquistaban todo lo que podian ver. Los drow conspiraban en la oscuridad.</p>
+        <p data-es="Entonces alguien encontro algo en el centro exacto del mundo. Donde los cinco territorios se tocaban." data-en="Then someone found something at the exact center of the world. Where the five territories met.">Entonces alguien encontro algo en el centro exacto del mundo. Donde los cinco territorios se tocaban.</p>
+        <p data-es="Una llama que no producia luz." data-en="A flame that produced no light.">Una llama que no producia luz.</p>
+
+        <div class="pista">
+          <span class="pista-label" data-es="Pista del mundo" data-en="World clue">Pista del mundo</span>
+          <span data-es="La Llama no fue encendida. Estaba ahi antes que la piedra, antes que el agua, antes que la primera criatura que respiro. Alguien &mdash; o algo &mdash; ya habia intentado sellarla antes. Los sellos que Kael encontro no eran nuevos. Eran reparaciones." data-en="The Flame was not lit. It was there before stone, before water, before the first creature that breathed. Someone &mdash; or something &mdash; had already tried to seal it before. The seals Kael found were not new. They were repairs.">La Llama no fue encendida. Estaba ahi antes que la piedra, antes que el agua, antes que la primera criatura que respiro. Alguien &mdash; o algo &mdash; ya habia intentado sellarla antes. Los sellos que Kael encontro no eran nuevos. Eran reparaciones.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ EL PACTO ═══ -->
+    <div class="epoca reveal">
+      <h2 class="epoca-titulo" data-es="II. El Pacto de las Cinco Sangres" data-en="II. The Pact of Five Bloods">II. El Pacto de las Cinco Sangres</h2>
+      <p class="epoca-fecha" data-es="Ano 0" data-en="Year 0">Ano 0</p>
+      <div class="epoca-texto">
+        <p data-es="Un hombre llamado Kael convencio a un representante de cada raza para que lo siguiera bajo tierra. Les mostro la Llama. Les mostro lo que habia del otro lado." data-en="A man named Kael convinced one representative from each race to follow him underground. He showed them the Flame. He showed them what was on the other side.">Un hombre llamado Kael convencio a un representante de cada raza para que lo siguiera bajo tierra. Les mostro la Llama. Les mostro lo que habia del otro lado.</p>
+        <p data-es="Ninguno de los cinco hablo durante tres dias." data-en="None of the five spoke for three days.">Ninguno de los cinco hablo durante tres dias.</p>
+        <p data-es="Al cuarto dia firmaron un pacto. Cinco cristales. Cinco sangres. El primer sello que cerro la puerta." data-en="On the fourth day they signed a pact. Five crystals. Five bloods. The first seal that closed the door.">Al cuarto dia firmaron un pacto. Cinco cristales. Cinco sangres. El primer sello que cerro la puerta.</p>
+        <p data-es="Sobre ese sello, Kael construyo una ciudad. Sobre esa ciudad, un imperio. Sobre ese imperio, mil anos de paz." data-en="Over that seal, Kael built a city. Over that city, an empire. Over that empire, a thousand years of peace.">Sobre ese sello, Kael construyo una ciudad. Sobre esa ciudad, un imperio. Sobre ese imperio, mil anos de paz.</p>
+
+        <div class="fragmento">
+          <p class="fragmento-texto" data-es="&laquo;Todo lo que construimos fue la tapa de un ataud. Pero mientras duro, fue magnifico.&raquo;" data-en="&laquo;Everything we built was the lid of a coffin. But while it lasted, it was magnificent.&raquo;">&laquo;Todo lo que construimos fue la tapa de un ataud. Pero mientras duro, fue magnifico.&raquo;</p>
+          <p class="fragmento-autor" data-es="&mdash; Inscripcion en el Templo de los Cinco, Kael'Zar" data-en="&mdash; Inscription at the Temple of the Five, Kael'Zar">&mdash; Inscripcion en el Templo de los Cinco, Kael'Zar</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ MIL ANOS ═══ -->
+    <div class="epoca reveal">
+      <h2 class="epoca-titulo" data-es="III. Los Mil Anos de Oro" data-en="III. The Thousand Golden Years">III. Los Mil Anos de Oro</h2>
+      <p class="epoca-fecha" data-es="Ano 1 — 996" data-en="Year 1 — 996">Ano 1 &mdash; 996</p>
+      <div class="epoca-texto">
+        <p data-es="Doce emperadores. Mil anos. Una ciudad que fue la mas grande del mundo. Cinco razas conviviendo en el mismo lugar, inventando juntas cosas que ninguna podria haber sonado sola." data-en="Twelve emperors. A thousand years. A city that was the greatest in the world. Five races coexisting in the same place, inventing together things none could have dreamed alone.">Doce emperadores. Mil anos. Una ciudad que fue la mas grande del mundo. Cinco razas conviviendo en el mismo lugar, inventando juntas cosas que ninguna podria haber sonado sola.</p>
+        <p data-es="Pero cada generacion se olvido un poco mas de por que existian los sellos. El miedo se volvio respeto. El respeto se volvio tradicion. La tradicion se volvio supersticion. Y la supersticion se volvio curiosidad." data-en="But each generation forgot a little more about why the seals existed. Fear became respect. Respect became tradition. Tradition became superstition. And superstition became curiosity.">Pero cada generacion se olvido un poco mas de por que existian los sellos. El miedo se volvio respeto. El respeto se volvio tradicion. La tradicion se volvio supersticion. Y la supersticion se volvio curiosidad.</p>
+
+        <div class="pista">
+          <span class="pista-label" data-es="Pista del mundo" data-en="World clue">Pista del mundo</span>
+          <span data-es="El septimo emperador, Mordek, fue el primero en acercarse a la Llama despues de Kael. Lo que vio le cambio la cara para siempre. Su retrato en la Ciudadela muestra a un hombre joven que entra y a un anciano que sale. Estuvo dentro tres minutos." data-en="The seventh emperor, Mordek, was the first to approach the Flame after Kael. What he saw changed his face forever. His portrait in the Citadel shows a young man entering and an old man leaving. He was inside for three minutes.">El septimo emperador, Mordek, fue el primero en acercarse a la Llama despues de Kael. Lo que vio le cambio la cara para siempre. Su retrato en la Ciudadela muestra a un hombre joven que entra y a un anciano que sale. Estuvo dentro tres minutos.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ LA CAIDA ═══ -->
+    <div class="epoca reveal">
+      <h2 class="epoca-titulo" data-es="IV. La Caida" data-en="IV. The Fall">IV. La Caida</h2>
+      <p class="epoca-fecha" data-es="Ano 997" data-en="Year 997">Ano 997</p>
+      <div class="epoca-texto">
+        <p data-es="El duodecimo emperador, Kael'Theron, no era un tirano. Era un hombre desesperado. Su esposa moria de una enfermedad que ninguna magia podia curar." data-en="The twelfth emperor, Kael'Theron, was not a tyrant. He was a desperate man. His wife was dying of a disease no magic could cure.">El duodecimo emperador, Kael'Theron, no era un tirano. Era un hombre desesperado. Su esposa moria de una enfermedad que ninguna magia podia curar.</p>
+        <p data-es="Los textos antiguos decian que la Llama era una puerta a un lugar donde la muerte no existia. Si podia abrirla, solo un poco..." data-en="Ancient texts said the Flame was a door to a place where death did not exist. If he could open it, just a little...">Los textos antiguos decian que la Llama era una puerta a un lugar donde la muerte no existia. Si podia abrirla, solo un poco...</p>
+        <p data-es="El Consejo de las Cinco Razas voto. Cuatro a favor. Los enanos votaron en contra. Como siempre, tenian razon." data-en="The Council of Five Races voted. Four in favor. The dwarves voted against. As always, they were right.">El Consejo de las Cinco Razas voto. Cuatro a favor. Los enanos votaron en contra. Como siempre, tenian razon.</p>
+        <p data-es="Kael'Theron rompio cuatro sellos. El quinto se agrieto pero no cedio. La Llama se abrio." data-en="Kael'Theron broke four seals. The fifth cracked but held. The Flame opened.">Kael'Theron rompio cuatro sellos. El quinto se agrieto pero no cedio. La Llama se abrio.</p>
+        <p data-es="Lo que vio del otro lado no tiene nombre. No porque no haya palabras &mdash; porque las palabras se niegan." data-en="What he saw on the other side has no name. Not because there are no words &mdash; because the words refuse.">Lo que vio del otro lado no tiene nombre. No porque no haya palabras &mdash; porque las palabras se niegan.</p>
+
+        <div class="fragmento">
+          <p class="fragmento-texto" data-es="&laquo;No busque poder. Busque una cura para la muerte. Encontre algo peor que la muerte.&raquo;" data-en="&laquo;I didn't seek power. I sought a cure for death. I found something worse than death.&raquo;">&laquo;No busque poder. Busque una cura para la muerte. Encontre algo peor que la muerte.&raquo;</p>
+          <p class="fragmento-autor" data-es="&mdash; Kael'Theron, el Ultimo Emperador" data-en="&mdash; Kael'Theron, the Last Emperor">&mdash; Kael'Theron, el Ultimo Emperador</p>
+        </div>
+
+        <div class="pista">
+          <span class="pista-label" data-es="Pista del mundo" data-en="World clue">Pista del mundo</span>
+          <span data-es="Kael'Theron uso su propio cuerpo como sello. Lleva mil anos ardiendo dentro de la Llama, manteniendo la puerta cerrada con su voluntad. Pero mil anos de agonia quiebran a cualquiera. El sello se debilita. Y lo que hay del otro lado puede olerlo." data-en="Kael'Theron used his own body as a seal. He has been burning inside the Flame for a thousand years, keeping the door shut with his will. But a thousand years of agony breaks anyone. The seal weakens. And what's on the other side can smell it.">Kael'Theron uso su propio cuerpo como sello. Lleva mil anos ardiendo dentro de la Llama, manteniendo la puerta cerrada con su voluntad. Pero mil anos de agonia quiebran a cualquiera. El sello se debilita. Y lo que hay del otro lado puede olerlo.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ LOS CINCO REINOS ═══ -->
+    <div class="epoca reveal">
+      <h2 class="epoca-titulo" data-es="V. Los Cinco Reinos" data-en="V. The Five Kingdoms">V. Los Cinco Reinos</h2>
+      <p class="epoca-fecha" data-es="Ano 997 — Presente" data-en="Year 997 — Present">Ano 997 &mdash; Presente</p>
+      <div class="epoca-texto">
+        <p data-es="La onda de choque destruyo Kael'Zar en un instante. Un millon de personas murieron en el tiempo que tarda un corazon en latir." data-en="The shockwave destroyed Kael'Zar in an instant. A million people died in the time it takes a heart to beat.">La onda de choque destruyo Kael'Zar en un instante. Un millon de personas murieron en el tiempo que tarda un corazon en latir.</p>
+        <p data-es="Las cinco razas hicieron lo que siempre habian hecho antes de Kael: se separaron. Cada una reescribio la historia. Cada una culpo a las otras. Ninguna quiso volver." data-en="The five races did what they had always done before Kael: they separated. Each rewrote history. Each blamed the others. None wanted to return.">Las cinco razas hicieron lo que siempre habian hecho antes de Kael: se separaron. Cada una reescribio la historia. Cada una culpo a las otras. Ninguna quiso volver.</p>
+        <p data-es="Pero la Llama sigue ardiendo. Y Kael'Theron sigue sosteniendola. Y su cuerpo se esta quebrando." data-en="But the Flame still burns. And Kael'Theron still holds it. And his body is breaking.">Pero la Llama sigue ardiendo. Y Kael'Theron sigue sosteniendola. Y su cuerpo se esta quebrando.</p>
+      </div>
+    </div>
+
+    <!-- ═══ MISTERIOS SIN RESOLVER ═══ -->
+    <h2 class="section-title" style="font-size:1.3rem; margin-top:2rem;" data-es="Misterios Sin Resolver" data-en="Unsolved Mysteries">Misterios Sin Resolver</h2>
+    <div class="section-line"></div>
+
+    <div class="misterio-grid">
+      <div class="misterio-card reveal">
+        <div class="misterio-icon">&#128293;</div>
+        <h3 class="misterio-title" data-es="La Llama" data-en="The Flame">La Llama</h3>
+        <p class="misterio-desc" data-es="No es un fuego. Es una puerta. Pero... a donde? Y quien la abrio la primera vez?" data-en="It's not a fire. It's a door. But... to where? And who opened it the first time?">No es un fuego. Es una puerta. Pero... a donde? Y quien la abrio la primera vez?</p>
+      </div>
+      <div class="misterio-card reveal">
+        <div class="misterio-icon">&#128142;</div>
+        <h3 class="misterio-title" data-es="Los Cristales" data-en="The Crystals">Los Cristales</h3>
+        <p class="misterio-desc" data-es="Los cinco Cristales de Memoria sellan la puerta. Pero por que funcionan con cooperacion? Que clase de cerradura necesita cinco llaves de cinco razas distintas?" data-en="The five Memory Crystals seal the door. But why do they work through cooperation? What kind of lock needs five keys from five different races?">Los cinco Cristales de Memoria sellan la puerta. Pero por que funcionan con cooperacion? Que clase de cerradura necesita cinco llaves de cinco razas distintas?</p>
+      </div>
+      <div class="misterio-card reveal">
+        <div class="misterio-icon">&#128081;</div>
+        <h3 class="misterio-title" data-es="El Emperador" data-en="The Emperor">El Emperador</h3>
+        <p class="misterio-desc" data-es="Kael'Theron lleva mil anos como sello. Dicen que ya no quiere cerrar la puerta. Dicen que ahora ES la puerta. Y que quiere que la abran." data-en="Kael'Theron has been the seal for a thousand years. They say he no longer wants to close the door. They say he IS the door now. And he wants it opened.">Kael'Theron lleva mil anos como sello. Dicen que ya no quiere cerrar la puerta. Dicen que ahora ES la puerta. Y que quiere que la abran.</p>
+      </div>
+      <div class="misterio-card reveal">
+        <div class="misterio-icon">&#128065;</div>
+        <h3 class="misterio-title" data-es="Lo Que Hay Detras" data-en="What Lies Beyond">Lo Que Hay Detras</h3>
+        <p class="misterio-desc" data-es="No es un demonio. No es un dios. No es un ejercito. Es hambre. Y el mundo es comida." data-en="It's not a demon. It's not a god. It's not an army. It's hunger. And the world is food.">No es un demonio. No es un dios. No es un ejercito. Es hambre. Y el mundo es comida.</p>
+      </div>
+      <div class="misterio-card reveal">
+        <div class="misterio-icon">&#129520;</div>
+        <h3 class="misterio-title" data-es="El Sexto Sello" data-en="The Sixth Seal">El Sexto Sello</h3>
+        <p class="misterio-desc" data-es="Kael encontro sellos rotos cuando descubrio la Llama. Alguien estuvo ahi antes. Alguien que no era de ninguna de las cinco razas. Quien?" data-en="Kael found broken seals when he discovered the Flame. Someone was there before. Someone who wasn't from any of the five races. Who?">Kael encontro sellos rotos cuando descubrio la Llama. Alguien estuvo ahi antes. Alguien que no era de ninguna de las cinco razas. Quien?</p>
+      </div>
+    </div>
+
+    <!-- ═══ CTA ═══ -->
+    <div class="cta-historia">
+      <p data-es="La historia no esta terminada. Los cinco libros de las Cronicas de Kael'Zar estan dispersos por las ruinas. Encontralos. Lelos. Y despues decidi: vas a cerrar la puerta, o la vas a abrir?" data-en="The story isn't over. The five books of the Chronicles of Kael'Zar are scattered through the ruins. Find them. Read them. Then decide: will you close the door, or open it?">La historia no esta terminada. Los cinco libros de las Cronicas de Kael'Zar estan dispersos por las ruinas. Encontralos. Lelos. Y despues decidi: vas a cerrar la puerta, o la vas a abrir?</p>
+      <a href="conectar.html" class="btn btn-primary" data-es="Entrar a Zirathar" data-en="Enter Zirathar">Entrar a Zirathar</a>
+    </div>
+
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 Zirathar &mdash; <span data-es="Todos los derechos reservados" data-en="All rights reserved">Todos los derechos reservados</span></p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

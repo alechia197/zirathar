@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mapas — Zirathar</title>
+  <meta name="description" content="Mapas del mundo de Zirathar: los cinco reinos y sus zonas, desde las capitales hasta Kael'Zar.">
+  <link rel="stylesheet" href="css/estilos.css">
+  <style>
+    .page-header { padding-top: 80px; text-align: center; padding-bottom: 1rem; }
+    .mapas-container { max-width: 1100px; margin: 0 auto; padding: 0 2rem 4rem; }
+
+    /* Selector de reino */
+    .reino-selector { display: flex; justify-content: center; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 2rem; }
+    .reino-btn { padding: 0.6rem 1.2rem; border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; background: rgba(255,255,255,0.03); cursor: pointer; font-family: 'Cinzel', serif; font-size: 0.85rem; color: #aaa; transition: all 0.3s; }
+    .reino-btn:hover { border-color: rgba(200,134,10,0.5); color: #fff; }
+    .reino-btn.active { border-color: var(--dorado); color: var(--dorado); background: rgba(200,134,10,0.1); }
+
+    /* Zona tabs */
+    .zona-tabs { display: flex; gap: 0.3rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
+    .zona-tab { padding: 0.4rem 0.8rem; border: 1px solid rgba(255,255,255,0.08); border-radius: 4px; background: rgba(255,255,255,0.02); cursor: pointer; font-size: 0.8rem; color: #888; transition: all 0.3s; }
+    .zona-tab:hover { color: #ccc; border-color: rgba(255,255,255,0.2); }
+    .zona-tab.active { color: #fff; border-color: var(--dorado); background: rgba(200,134,10,0.08); }
+
+    /* Historia de zona */
+    .zona-header { margin-bottom: 1.5rem; }
+    .zona-title { font-family: 'Cinzel Decorative', serif; font-size: 1.3rem; color: var(--dorado); margin-bottom: 0.3rem; }
+    .zona-nivel { font-size: 0.8rem; opacity: 0.5; margin-bottom: 0.8rem; }
+    .zona-lore { font-size: 0.9rem; line-height: 1.7; opacity: 0.8; margin-bottom: 1rem; }
+    .zona-pista { background: rgba(200,134,10,0.06); border-left: 3px solid rgba(200,134,10,0.4); padding: 0.8rem 1rem; border-radius: 0 6px 6px 0; font-style: italic; font-size: 0.85rem; margin-bottom: 1rem; }
+    .zona-pista-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px; color: var(--dorado); opacity: 0.7; display: block; margin-bottom: 0.2rem; font-style: normal; }
+    .zona-raza-info { font-size: 0.85rem; opacity: 0.6; margin-bottom: 1.5rem; }
+    .zona-raza-info strong { color: var(--dorado); }
+
+    /* Mapa de salas */
+    .mapa-grid { position: relative; overflow-x: auto; overflow-y: auto; max-height: 600px; border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; background: rgba(0,0,0,0.3); padding: 2rem; }
+    .mapa-canvas { position: relative; min-width: 100%; min-height: 400px; }
+
+    .sala-node { position: absolute; width: 14px; height: 14px; border-radius: 3px; cursor: pointer; transition: all 0.2s; z-index: 2; }
+    .sala-node:hover { transform: scale(1.8); z-index: 10; }
+    .sala-node.segura { border: 2px solid rgba(39,174,96,0.8); }
+
+    .sala-tooltip { display: none; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.95); border: 1px solid rgba(200,134,10,0.4); border-radius: 4px; padding: 0.4rem 0.6rem; white-space: nowrap; font-size: 0.75rem; color: #ddd; z-index: 100; pointer-events: none; }
+    .sala-node:hover .sala-tooltip { display: block; }
+
+    .exit-line { position: absolute; background: rgba(255,255,255,0.12); z-index: 1; }
+
+    /* Areas legend */
+    .areas-legend { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.06); }
+    .area-chip { font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 3px; display: flex; align-items: center; gap: 0.3rem; }
+    .area-dot { width: 8px; height: 8px; border-radius: 2px; }
+
+    /* Stats */
+    .zona-stats { display: flex; gap: 1.5rem; margin-top: 1rem; flex-wrap: wrap; }
+    .stat-item { font-size: 0.8rem; opacity: 0.5; }
+    .stat-item strong { color: var(--dorado); opacity: 1; }
+
+    /* Empty state */
+    .empty-msg { text-align: center; padding: 3rem; opacity: 0.4; font-style: italic; }
+
+    @media (max-width: 600px) {
+      .reino-btn { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
+      .mapa-grid { max-height: 400px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Zirathar</a>
+    <ul class="nav-links">
+      <li><a href="razas.html">Razas</a></li>
+      <li><a href="clases.html">Clases</a></li>
+      <li><a href="mundo.html">Mundo</a></li>
+      <li><a href="historia.html">Historia</a></li>
+      <li><a href="mapas.html">Mapas</a></li>
+      <li><a href="conectar.html">Conectar</a></li>
+    </ul>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="lang-es">ES</button>
+      <button class="lang-btn" id="lang-en">EN</button>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1 class="section-title">Mapas del Mundo</h1>
+    <div class="section-line"></div>
+    <p style="opacity:0.5; margin-top:0.5rem; font-style:italic;">Cartografia de los cinco reinos y las ruinas de Kael'Zar</p>
+  </div>
+
+  <div class="mapas-container">
+    <div class="reino-selector" id="reinoSelector"></div>
+    <div class="zona-tabs" id="zonaTabs"></div>
+    <div id="zonaContent"></div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 Zirathar</p>
+  </footer>
+
+  <script src="js/main.js"></script>
+  <script>
+// ═══════════════════════════════════════════════════
+// DATOS DE LORE POR ZONA
+// ═══════════════════════════════════════════════════
+const REINOS = {
+  humanos: { nombre: "Reino de Valdheim", color: "#e74c3c", icon: "\u2694" },
+  elfos:   { nombre: "Elandor",           color: "#27ae60", icon: "\uD83C\uDF43" },
+  enanos:  { nombre: "Khazdor",           color: "#3498db", icon: "\u26CF" },
+  orcos:   { nombre: "Gorok",             color: "#e67e22", icon: "\u2620" },
+  drows:   { nombre: "Dun'Zhara",         color: "#8e44ad", icon: "\uD83D\uDD77" },
+  centro:  { nombre: "Kael'Zar",          color: "#c8860a", icon: "\uD83D\uDD25" },
+};
+
+const ZONA_LORE = {
+  humanos_z0: {
+    titulo: "Valdheim — La Capital del Norte",
+    nivel: "Nivel 1-5 | Zona segura",
+    lore: "La ciudad mas grande de los reinos del norte. Fundada sobre las cenizas de lo que alguna vez fue la provincia septentrional del Imperio de Kael. Sus murallas han resistido tres asedios orcos y una guerra civil que todavia arde bajo la superficie.",
+    pista: "El trono de Valdheim tiene una grieta que nadie puede reparar. Dicen que aparecio la misma noche que cayo el Imperio, como si la piedra supiera lo que los hombres tardaron siglos en entender.",
+    razas: "Todas las razas pueden transitar. Los humanos se mueven con naturalidad."
+  },
+  humanos_z1: {
+    titulo: "Tierras de Valdheim",
+    nivel: "Nivel 1-20 | 8 areas",
+    lore: "Los campos, bosques y minas que rodean la capital. Aqui los reclutas aprenden que el mundo no es tan seguro como las murallas de Valdheim prometen. Bandidos, lobos y cosas peores acechan entre los caminos.",
+    pista: "Los mineros de las Minas de Hierro a veces encuentran huesos que no son de ningun animal conocido. Huesos negros que vibran cuando los tocan. Nadie habla de eso.",
+    razas: "Humanos tienen ventaja natural. Otras razas pueden ser vistas con desconfianza por los NPCs locales."
+  },
+  humanos_z2: { titulo: "Fronteras Humanas", nivel: "Nivel 21-40", lore: "Donde las tierras seguras terminan y empieza lo desconocido. Pantanos, fuertes abandonados y pasos de montania donde el comercio y la muerte van de la mano.", pista: "El Fuerte Roto fue abandonado hace veinte anios. Las ordenes de evacuacion nunca llegaron — los mensajeros desaparecieron todos la misma noche.", razas: "Zona abierta a todas las razas. Los comerciantes enanos son comunes." },
+  humanos_z3: { titulo: "Tierras Disputadas", nivel: "Nivel 41-60", lore: "Territorio en conflicto permanente. Aqui los ejercitos de Valdheim chocan con incursiones orcas y la diplomacia elfica se deshace como arena entre los dedos.", pista: "Las Ruinas de Taelvorn emiten un brillo purpura en las noches sin luna. Los soldados que acampan cerca tienen pesadillas identicas: cinco tronos vacios.", razas: "Zona de conflicto. Todas las razas presentes, ninguna bienvenida." },
+  humanos_z4: { titulo: "Confines del Reino", nivel: "Nivel 61-80 | PvP", lore: "El ultimo tramo antes de las ruinas de Kael'Zar. Guerra civil, la realidad se agrieta y los muertos hablan. El Duque Aldric conspira y el Rey Edric IV llama a la ultima leva.", pista: "El Duque Aldric tiene un cristal negro colgado del cuello que nadie le vio comprar. Desde que lo lleva, sus ojos no reflejan la luz correctamente.", razas: "PvP habilitado. Zona peligrosa para todas las razas." },
+  humanos_z5: { titulo: "Ultimo Tramo Humano", nivel: "Nivel 60-80", lore: "La frontera final antes de Kael'Zar. Solo los mas fuertes sobreviven.", pista: "Los cinco caminos convergen.", razas: "Todas las razas." },
+  elfos_z0: {
+    titulo: "Thyvalos — Ciudad de los Arboles Eternos",
+    nivel: "Nivel 1-5 | Zona segura",
+    lore: "La capital elfica, construida en y entre los arboles mas antiguos del mundo. Cada edificio es un arbol vivo que crecio durante siglos para dar forma a salas, pasillos y torres. La ciudad respira.",
+    pista: "El Arbol Madre en el centro de Thyvalos dejo de crecer hace tres anios. Los druidas dicen que no esta muerto — esta escuchando algo que viene de abajo.",
+    razas: "Los elfos se mueven con gracia natural. Los drow son vigilados con desconfianza."
+  },
+  elfos_z1: {
+    titulo: "Bosques de Elandor",
+    nivel: "Nivel 1-20 | 8 areas",
+    lore: "El bosque sagrado que rodea Thyvalos. Senderos de luz entre arboles milenarios, lagos que reflejan el futuro y ruinas de templos tan antiguos que los propios elfos olvidaron su proposito.",
+    pista: "En el Lago Espejo, los elfos ven su reflejo envejecido. Nadie deberia ver eso. Los elfos no envejecen. Algo esta cambiando.",
+    razas: "Los elfos conocen los senderos ocultos. Los enanos se pierden con facilidad en los bosques."
+  },
+  elfos_z2: { titulo: "Espesura de Elandor", nivel: "Nivel 21-40", lore: "Donde el bosque se vuelve salvaje. Pantanos de luciernagas, cascadas de plata y un bosque petrificado que nadie visita por segunda vez.", pista: "Los arboles petrificados del Bosque Muerto tienen anillos de crecimiento que no corresponden a ningun calendario conocido. Son mas viejos que los elfos.", razas: "Los elfos y merodeadores tienen ventaja en terreno boscoso." },
+  elfos_z3: { titulo: "Fronteras Elficas", nivel: "Nivel 41-60", lore: "Donde los bosques empiezan a morir. El Paso de las Sombras conecta con territorios hostiles y las ruinas de Kael'Avar susurran secretos que los elfos preferirian no escuchar.", pista: "En Kael'Avar hay un mural que muestra seis razas, no cinco. La sexta fue borrada con tal violencia que la pared sangra cuando llueve.", razas: "Los drow conocen los tuneles bajo esta zona. Los elfos dominan el terreno elevado." },
+  elfos_z4: { titulo: "Confines Elficos", nivel: "Nivel 61-80 | PvP", lore: "El bosque agoniza. La corrupcion de Kael'Zar devoro el corazon de la tierra. Los Vel'Sharai se alzaron y el dragon Vyrmathael despierta de su sueno de cristal.", pista: "Vyrmathael no es un dragon. Es algo mas viejo disfrazado de dragon. Los elfos lo saben. Por eso lo dejaron dormir.", razas: "PvP habilitado. Todas las razas en conflicto." },
+  elfos_z5: { titulo: "Ultimo Tramo Elfico", nivel: "Nivel 60-80", lore: "El bosque ya no reconoce a sus guardianes.", pista: "Las raices de los arboles crecen hacia arriba.", razas: "Todas las razas." },
+  enanos_z0: {
+    titulo: "Keldruun — La Gran Sala Bajo la Montana",
+    nivel: "Nivel 1-5 | Zona segura",
+    lore: "La capital enana, excavada en el corazon de la montana mas alta del mundo. Salas inmensas sostenidas por columnas talladas con la historia de cada clan. La roca aqui es mas vieja que la memoria.",
+    pista: "En la Sala de los Ancestros hay un pilar que no fue tallado por manos enanas. Es mas antiguo que la montana misma. Los enanos construyeron alrededor de el sin tocarlo. Nadie explica por que.",
+    razas: "Los enanos se mueven con seguridad total. Las razas de superficie se desorientan en los tuneles."
+  },
+  enanos_z1: {
+    titulo: "Montanas de Khazdor",
+    nivel: "Nivel 1-20 | 8 areas",
+    lore: "Las minas, tuneles y picos que rodean Keldruun. Vetas de hierro, cavernas de cristal y algo mas profundo que los enanos excavaron sin saber que estaba ahi.",
+    pista: "A 200 metros de profundidad las paredes de las minas tienen marcas de garras. Las garras van hacia arriba. Algo intento salir.",
+    razas: "Los enanos dominan el subterraneo. Los orcos tienen fuerza para las minas. Los elfos sufren claustrofobia."
+  },
+  enanos_z2: { titulo: "Profundidades de Khazdor", nivel: "Nivel 21-40", lore: "Mas abajo de lo que la luz llega. Minas profundas, forjas ancestrales y un lago de cristal que refleja estrellas que no existen en el cielo de la superficie.", pista: "El Lago de Cristal muestra estrellas que los astronomos no reconocen. Un astronomo elfo que lo visito dijo: 'Esas son las estrellas del otro lado'. Se nego a explicar que significaba.", razas: "Los enanos y drow se mueven con naturalidad. Los humanos necesitan luz." },
+  enanos_z3: { titulo: "Dominios de Piedra", nivel: "Nivel 41-60", lore: "Las profundidades donde los enanos encontraron cosas que no deberian existir. El Abismo del Minero, la Sala del Rey de Piedra y ruinas que preceden a los enanos.", pista: "Las ruinas de Kael'Dur son de un estilo arquitectonico que ninguna raza reconoce como propio. Alguien construyo esto antes. Mucho antes.", razas: "Zona profunda. Los drow tienen ventaja en vision. Los enanos conocen los caminos." },
+  enanos_z4: { titulo: "Confines Enanos", nivel: "Nivel 61-80 | PvP", lore: "La montana colapsa. La Forja de las Estrellas despierta al Durmiente — un dios primordial cuyo cuerpo ES la montana. Los automatones ejecutan protocolos de emergencia.", pista: "El Durmiente no es un dios. Es lo que queda del sexto sello — el que Kael no pudo terminar. La montana entera es un sello incompleto.", razas: "PvP habilitado. Zona inestable para todas las razas." },
+  enanos_z5: { titulo: "Ultimo Tramo Enano", nivel: "Nivel 60-80", lore: "Las profundidades absolutas donde la piedra se vuelve carne.", pista: "La montana tiene pulso.", razas: "Todas las razas." },
+  orcos_z0: {
+    titulo: "Gorzakhar — La Fortaleza de Hierro",
+    nivel: "Nivel 1-5 | Zona segura",
+    lore: "La capital orca, construida sobre un volcan activo. Las paredes son de roca volcanica negra y el suelo siempre esta caliente. Aqui la fuerza es la unica moneda que vale.",
+    pista: "El trono de Gorzakhar esta hecho con un metal que ningun herrero reconoce. Es negro, liviano y vibra cuando alguien miente sentado en el. Los jefes de guerra evitan sentarse.",
+    razas: "Los orcos dominan por presencia. Las otras razas son toleradas si demuestran fuerza."
+  },
+  orcos_z1: {
+    titulo: "Tierras de Gorok",
+    nivel: "Nivel 1-20 | 8 areas",
+    lore: "Llanuras de ceniza, acantilados rojos y un bosque quemado que se niega a morir. Aqui los orcos jovenes cazan su primera bestia y aprenden que el mundo no perdona la debilidad.",
+    pista: "En la Arena de los Desafios hay una piedra que pesa mas cada anio. Los chamanes dicen que esta absorbiendo la furia de cada combate. Cuando explote, nacera algo.",
+    razas: "Los orcos y barbaros tienen bonus de fuerza. Los elfos se debilitan por el calor volcanico."
+  },
+  orcos_z2: { titulo: "Territorios Salvajes", nivel: "Nivel 21-40", lore: "Donde la civilizacion orca termina y empieza lo primitivo. Volcanes dormidos, pantanos de sangre y campamentos de senores de la guerra que no responden a Gorzakhar.", pista: "El Volcan Dormido no esta dormido. Los chamanes lo saben. Ignaroth respira dentro, y cada respiracion dura un anio.", razas: "Los orcos se mueven con naturalidad. Los enanos resisten el calor. Los elfos sufren." },
+  orcos_z3: { titulo: "Tierras de Fuego", nivel: "Nivel 41-60", lore: "Rios de lava, forjas titanicas y ruinas de una civilizacion que adoraba al fuego antes que los orcos. Las ruinas de Kael'Gor arden con un fuego que no se apaga.", pista: "La Forja del Titan no fue construida por orcos ni por el Imperio de Kael. Fue construida por lo que habia antes. El metal que produce no deberia existir en este plano.", razas: "Zona volcanica. Los orcos y enanos resisten. Los elfos y drow sufren." },
+  orcos_z4: { titulo: "Confines Orcos", nivel: "Nivel 61-80 | PvP", lore: "Ignaroth despierta. El volcan ES su cuerpo. La WAAAGH se convierte en una cruzada existencial. Jinetes de grifos pelean contra aberraciones dimensionales.", pista: "Ignaroth no es un titan. Es el gemelo de lo que hay del otro lado de la Llama. Separados al nacer del mundo. Uno quedo afuera. El otro quedo adentro.", razas: "PvP habilitado. Zona terminal para todas las razas." },
+  orcos_z5: { titulo: "Ultimo Tramo Orco", nivel: "Nivel 60-80", lore: "El fuego que arde aqui no viene de abajo. Viene de adentro.", pista: "La ceniza sabe a metal.", razas: "Todas las razas." },
+  drows_z0: {
+    titulo: "Dun'Zhara — La Ciudad de la Sombra Eterna",
+    nivel: "Nivel 1-5 | Zona segura",
+    lore: "La capital drow, mil metros bajo la superficie. Una ciudad de obsidiana iluminada por hongos bioluminiscentes y cristales que capturan luz que nunca existio. Las intrigas aqui son mas mortales que las espadas.",
+    pista: "En el centro de Dun'Zhara hay un pozo que nadie midio. Los que tiraron cuerdas nunca las recuperaron. Los que tiraron piedras nunca escucharon el golpe.",
+    razas: "Los drow ven en la oscuridad total. Las razas de superficie necesitan luz o infravision."
+  },
+  drows_z1: {
+    titulo: "Cavernas de Dun'Zhara",
+    nivel: "Nivel 1-20 | 8 areas",
+    lore: "Los tuneles, rios subterraneos y cavernas de hongos que rodean la capital drow. Aranas del tamano de caballos, cristales que cantan y rios de agua tan negra que parece aceite.",
+    pista: "Los Cristales Negros en la caverna mas profunda emiten un sonido que solo los drow escuchan. El sonido es una voz. La voz dice un nombre. Siempre el mismo nombre. Nadie lo repite en voz alta.",
+    razas: "Los drow dominan completamente. Los enanos se orientan bien. Los humanos se pierden."
+  },
+  drows_z2: { titulo: "Profundidades de Dun'Zhara", nivel: "Nivel 21-40", lore: "Mas abajo de la capital. Abismos silenciosos, santuarios de sombra y minas abandonadas donde algo sigue excavando sin mineros.", pista: "Las minas abandonadas tienen tuneles nuevos que nadie excavo. Los tuneles llevan hacia abajo. Siempre hacia abajo.", razas: "Solo los drow y enanos se mueven con seguridad a esta profundidad." },
+  drows_z3: { titulo: "Dominio Drow", nivel: "Nivel 41-60", lore: "El territorio de la Reina Arana, el Lago de Veneno y ruinas que los propios drow temen. La guerra civil religiosa alcanza su punto mas sangriento.", pista: "Las ruinas de Kael'Zhur son identicas a las de Kael'Dur (enanos) y Kael'Gor (orcos). Tres ruinas, un mismo arquitecto. Ninguna raza lo construyo.", razas: "Los drow tienen ventaja absoluta. Los ilithidos empiezan a aparecer." },
+  drows_z4: { titulo: "Confines Subterraneos", nivel: "Nivel 61-80 | PvP", lore: "El Infraoscuro se desgarra. Los Azotamentes lanzan su ofensiva final. Un Elder Brain Primordial asciende del abismo. La guerra civil religiosa llega a su conclusion sangrienta.", pista: "El Elder Brain no invadio. Fue invitado. Alguien le abrio la puerta desde dentro de Dun'Zhara. La pregunta no es quien — es por que.", razas: "PvP habilitado. Zona de pesadilla para todas las razas." },
+  drows_z5: { titulo: "Ultimo Tramo Drow", nivel: "Nivel 60-80", lore: "La oscuridad tiene dientes aqui.", pista: "Lo que creian que era el fondo no era el fondo.", razas: "Todas las razas." },
+  centro_z5: {
+    titulo: "Kael'Zar — Las Ruinas del Centro del Mundo",
+    nivel: "Nivel 80-100 | PvP total | Zona neutral",
+    lore: "Las ruinas de la ciudad mas grande que existio. Cinco anillos concentricos descienden hacia el corazon del mundo donde la Llama Oscura arde desde antes del tiempo. Aqui convergen los cinco reinos. Aqui terminan las mentiras y empieza la verdad.",
+    pista: "La Llama no es un fuego. Es una herida. Y lo que hay del otro lado no tiene nombre porque nombrarlo le da poder. Cinco cristales. Cinco razas. Cinco voluntades. Eso es todo lo que se necesita para cerrarla. O para abrirla.",
+    razas: "Zona neutral — todas las razas. Los campamentos raciales son zona segura. El resto es PvP total."
+  },
+};
+
+// ═══════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════
+
+const AREA_COLORS = [
+  "#e74c3c","#27ae60","#3498db","#e67e22","#8e44ad",
+  "#f1c40f","#1abc9c","#e91e63","#00bcd4","#ff5722",
+  "#9c27b0","#4caf50","#ff9800","#607d8b","#795548",
+  "#cddc39","#03a9f4","#9e9e9e","#ffeb3b","#8bc34a"
+];
+
+let mapData = {};
+let currentReino = "humanos";
+let currentZona = 0;
+
+async function init() {
+  try {
+    const resp = await fetch("data/mapas.json");
+    mapData = await resp.json();
+  } catch(e) {
+    document.getElementById("zonaContent").innerHTML = '<p class="empty-msg">No se pudieron cargar los datos del mapa.</p>';
+    return;
+  }
+  renderReinoSelector();
+  selectReino("humanos");
+}
+
+function renderReinoSelector() {
+  const container = document.getElementById("reinoSelector");
+  container.innerHTML = "";
+  for (const [key, info] of Object.entries(REINOS)) {
+    const btn = document.createElement("button");
+    btn.className = "reino-btn";
+    btn.dataset.reino = key;
+    btn.textContent = `${info.icon} ${info.nombre}`;
+    btn.style.borderColor = `${info.color}40`;
+    btn.onclick = () => selectReino(key);
+    container.appendChild(btn);
+  }
+}
+
+function selectReino(reino) {
+  currentReino = reino;
+  document.querySelectorAll(".reino-btn").forEach(b => {
+    b.classList.toggle("active", b.dataset.reino === reino);
+    if (b.dataset.reino === reino) {
+      b.style.borderColor = REINOS[reino].color;
+      b.style.color = REINOS[reino].color;
+    } else {
+      b.style.borderColor = "rgba(255,255,255,0.1)";
+      b.style.color = "#aaa";
+    }
+  });
+
+  // Buscar zonas disponibles para este reino
+  const zonas = [];
+  for (const key of Object.keys(mapData)) {
+    if (key.startsWith(reino + "_z")) {
+      const z = parseInt(key.split("_z")[1]);
+      if (!zonas.includes(z)) zonas.push(z);
+    }
+  }
+  zonas.sort((a,b) => a - b);
+
+  renderZonaTabs(zonas);
+  if (zonas.length > 0) selectZona(zonas[0]);
+}
+
+function renderZonaTabs(zonas) {
+  const container = document.getElementById("zonaTabs");
+  container.innerHTML = "";
+  const nombres = ["Capital","Zona 1","Zona 2","Zona 3","Zona 4","Zona 5"];
+  for (const z of zonas) {
+    const tab = document.createElement("button");
+    tab.className = "zona-tab";
+    tab.dataset.zona = z;
+    tab.textContent = nombres[z] || `Zona ${z}`;
+    tab.onclick = () => selectZona(z);
+    container.appendChild(tab);
+  }
+}
+
+function selectZona(z) {
+  currentZona = z;
+  document.querySelectorAll(".zona-tab").forEach(t => t.classList.toggle("active", parseInt(t.dataset.zona) === z));
+  renderZona();
+}
+
+function renderZona() {
+  const key = `${currentReino}_z${currentZona}`;
+  const data = mapData[key];
+  const lore = ZONA_LORE[key] || {};
+  const reinoInfo = REINOS[currentReino];
+  const container = document.getElementById("zonaContent");
+
+  if (!data || data.salas.length === 0) {
+    container.innerHTML = '<p class="empty-msg">Esta zona aun no ha sido cartografiada.</p>';
+    return;
+  }
+
+  // Header con lore
+  let html = '<div class="zona-header">';
+  html += `<h2 class="zona-title" style="color:${reinoInfo.color}">${lore.titulo || key}</h2>`;
+  html += `<p class="zona-nivel">${lore.nivel || ""}</p>`;
+  if (lore.lore) html += `<p class="zona-lore">${lore.lore}</p>`;
+  if (lore.pista) {
+    html += `<div class="zona-pista"><span class="zona-pista-label">Pista del mundo</span>${lore.pista}</div>`;
+  }
+  if (lore.razas) html += `<p class="zona-raza-info"><strong>Movimiento:</strong> ${lore.razas}</p>`;
+  html += '</div>';
+
+  // Stats
+  const areas = [...new Set(data.salas.map(s => s.area).filter(a => a))];
+  html += '<div class="zona-stats">';
+  html += `<span class="stat-item"><strong>${data.salas.length}</strong> salas</span>`;
+  html += `<span class="stat-item"><strong>${areas.length}</strong> areas</span>`;
+  const seguras = data.salas.filter(s => s.zona_segura).length;
+  if (seguras > 0) html += `<span class="stat-item"><strong>${seguras}</strong> salas seguras</span>`;
+  html += '</div>';
+
+  // Mapa
+  html += '<div class="mapa-grid"><div class="mapa-canvas" id="mapaCanvas"></div></div>';
+
+  // Leyenda de areas
+  if (areas.length > 0) {
+    html += '<div class="areas-legend">';
+    areas.forEach((a, i) => {
+      const color = AREA_COLORS[i % AREA_COLORS.length];
+      html += `<span class="area-chip"><span class="area-dot" style="background:${color}"></span>${a}</span>`;
+    });
+    html += '</div>';
+  }
+
+  container.innerHTML = html;
+
+  // Renderizar nodos del mapa
+  setTimeout(() => renderMapNodes(data, areas), 50);
+}
+
+function renderMapNodes(data, areas) {
+  const canvas = document.getElementById("mapaCanvas");
+  if (!canvas) return;
+
+  const salas = data.salas;
+  const idMap = {};
+  salas.forEach(s => { idMap[s.id] = s; });
+
+  // Layout por BFS desde la primera sala
+  const positions = {};
+  const visited = new Set();
+  const queue = [];
+  const SPACING = 35;
+
+  // Empezar desde la primera sala
+  const start = salas[0];
+  positions[start.id] = { x: 0, y: 0 };
+  visited.add(start.id);
+  queue.push(start);
+
+  const DIR_OFFSETS = {
+    norte: {x:0,y:-1}, sur: {x:0,y:1}, este: {x:1,y:0}, oeste: {x:-1,y:0},
+    noreste: {x:1,y:-1}, noroeste: {x:-1,y:-1}, sureste: {x:1,y:1}, suroeste: {x:-1,y:1},
+    arriba: {x:0,y:-1}, abajo: {x:0,y:1},
+    n:{x:0,y:-1}, s:{x:0,y:1}, e:{x:1,y:0}, o:{x:-1,y:0},
+    ne:{x:1,y:-1}, no:{x:-1,y:-1}, se:{x:1,y:1}, so:{x:-1,y:1},
+    ar:{x:0,y:-1}, ab:{x:0,y:1},
+  };
+
+  while (queue.length > 0) {
+    const sala = queue.shift();
+    const pos = positions[sala.id];
+
+    for (const exit of sala.exits) {
+      if (visited.has(exit.dest_id)) continue;
+      if (!idMap[exit.dest_id]) continue;
+
+      const offset = DIR_OFFSETS[exit.dir] || {x:1,y:0};
+      let nx = pos.x + offset.x;
+      let ny = pos.y + offset.y;
+
+      // Evitar colisiones
+      const posKey = `${nx},${ny}`;
+      let tries = 0;
+      while (Object.values(positions).some(p => p.x === nx && p.y === ny) && tries < 8) {
+        nx += (Math.random() > 0.5 ? 1 : -1);
+        ny += (Math.random() > 0.5 ? 1 : -1);
+        tries++;
+      }
+
+      positions[exit.dest_id] = { x: nx, y: ny };
+      visited.add(exit.dest_id);
+      queue.push(idMap[exit.dest_id]);
+    }
+  }
+
+  // Salas sin posicion (desconectadas) — colocar abajo
+  let extraY = Math.max(...Object.values(positions).map(p => p.y), 0) + 2;
+  let extraX = 0;
+  salas.forEach(s => {
+    if (!positions[s.id]) {
+      positions[s.id] = { x: extraX, y: extraY };
+      extraX++;
+      if (extraX > 10) { extraX = 0; extraY++; }
+    }
+  });
+
+  // Normalizar posiciones
+  const minX = Math.min(...Object.values(positions).map(p => p.x));
+  const minY = Math.min(...Object.values(positions).map(p => p.y));
+  const maxX = Math.max(...Object.values(positions).map(p => p.x));
+  const maxY = Math.max(...Object.values(positions).map(p => p.y));
+
+  Object.values(positions).forEach(p => {
+    p.x = (p.x - minX) * SPACING + 30;
+    p.y = (p.y - minY) * SPACING + 30;
+  });
+
+  const width = (maxX - minX) * SPACING + 60;
+  const height = (maxY - minY) * SPACING + 60;
+  canvas.style.width = width + "px";
+  canvas.style.height = height + "px";
+
+  const reinoColor = REINOS[currentReino].color;
+
+  // Dibujar lineas de conexion
+  salas.forEach(sala => {
+    const pos = positions[sala.id];
+    if (!pos) return;
+    sala.exits.forEach(exit => {
+      const destPos = positions[exit.dest_id];
+      if (!destPos) return;
+
+      const dx = destPos.x - pos.x;
+      const dy = destPos.y - pos.y;
+      const len = Math.sqrt(dx*dx + dy*dy);
+      const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+      const line = document.createElement("div");
+      line.className = "exit-line";
+      line.style.left = (pos.x + 7) + "px";
+      line.style.top = (pos.y + 7) + "px";
+      line.style.width = len + "px";
+      line.style.height = "1px";
+      line.style.transformOrigin = "0 0";
+      line.style.transform = `rotate(${angle}deg)`;
+      canvas.appendChild(line);
+    });
+  });
+
+  // Dibujar nodos
+  salas.forEach(sala => {
+    const pos = positions[sala.id];
+    if (!pos) return;
+
+    const areaIdx = areas.indexOf(sala.area);
+    const color = areaIdx >= 0 ? AREA_COLORS[areaIdx % AREA_COLORS.length] : reinoColor;
+
+    const node = document.createElement("div");
+    node.className = "sala-node" + (sala.zona_segura ? " segura" : "");
+    node.style.left = pos.x + "px";
+    node.style.top = pos.y + "px";
+    node.style.background = color;
+
+    const tooltip = document.createElement("div");
+    tooltip.className = "sala-tooltip";
+    tooltip.textContent = sala.nombre + (sala.area ? ` (${sala.area})` : "");
+    node.appendChild(tooltip);
+
+    canvas.appendChild(node);
+  });
+}
+
+document.addEventListener("DOMContentLoaded", init);
+  </script>
+</body>
+</html>

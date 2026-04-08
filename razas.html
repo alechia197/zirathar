@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Razas — Zirathar</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <style>
+    .raza-section { padding: 4rem 2rem; max-width: 900px; margin: 0 auto; border-bottom: 1px solid rgba(200,134,10,0.1); }
+    .raza-header { display: flex; align-items: center; gap: 1.5rem; margin-bottom: 1.5rem; }
+    .raza-icon { font-size: 3rem; }
+    .raza-title { font-family: 'Cinzel Decorative', serif; font-size: 2rem; }
+    .raza-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin: 1.5rem 0; padding: 1rem; background: rgba(255,255,255,0.03); border-radius: 8px; }
+    .raza-stat { font-family: 'Cinzel', serif; font-size: 0.9rem; }
+    .stat-label { color: var(--dorado); }
+    .clases-lista { margin-top: 1rem; }
+    .clase-fav { color: #27ae60; }
+    .clase-med { color: #f39c12; }
+    .clase-des { color: #e74c3c; }
+    .page-header { padding-top: 80px; text-align: center; padding-bottom: 2rem; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Zirathar</a>
+    <ul class="nav-links">
+      <li><a href="razas.html">Razas</a></li>
+      <li><a href="clases.html">Clases</a></li>
+      <li><a href="mundo.html">Mundo</a></li>
+      <li><a href="historia.html">Historia</a></li>
+      <li><a href="mapas.html">Mapas</a></li>
+      <li><a href="conectar.html">Conectar</a></li>
+    </ul>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="lang-es">ES</button>
+      <button class="lang-btn" id="lang-en">EN</button>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1 class="section-title" data-es="Las Cinco Razas" data-en="The Five Races">Las Cinco Razas</h1>
+    <div class="section-line"></div>
+  </div>
+
+  <div id="humanos" class="raza-section">
+    <div class="raza-header">
+      <span class="raza-icon">&#9876;</span>
+      <h2 class="raza-title" style="color:#e74c3c;">Humanos</h2>
+    </div>
+    <p>Los humanos de Valdheim son una raza forjada en el conflicto. Versatiles y ambiciosos, dominan las llanuras centrales del continente. Su capital, la ciudad amurallada de Valdheim, es un bastian de comercio y guerra. No son los mas fuertes ni los mas sabios, pero su adaptabilidad los hace peligrosos.</p>
+    <div class="raza-stats">
+      <p class="raza-stat"><span class="stat-label">Capital:</span> Valdheim</p>
+      <p class="raza-stat"><span class="stat-label">Terreno:</span> Llanuras, colinas</p>
+      <p class="raza-stat"><span class="stat-label">Fortaleza:</span> Versatilidad</p>
+      <p class="raza-stat"><span class="stat-label">Debilidad:</span> Ninguna extrema</p>
+    </div>
+    <div class="clases-lista">
+      <p><span class="clase-fav">Favorables:</span> Guerrero, Paladin, Cazador</p>
+      <p><span class="clase-med">Medias:</span> Clerigo, Ladron, Barbaro</p>
+      <p><span class="clase-des">Desfavorables:</span> Mago, Brujo, Druida</p>
+    </div>
+  </div>
+
+  <div id="elfos" class="raza-section">
+    <div class="raza-header">
+      <span class="raza-icon">&#127811;</span>
+      <h2 class="raza-title" style="color:#27ae60;">Elfos</h2>
+    </div>
+    <p>Los elfos de Thyvalos habitan el Bosque Ancestral, un lugar donde los arboles tienen memoria y las raices susurran secretos milenarios. Agiles, orgullosos y longevos, son maestros del arco y la magia natural. Su conexion con la tierra es tan profunda que la corrupcion del bosque es su mayor temor.</p>
+    <div class="raza-stats">
+      <p class="raza-stat"><span class="stat-label">Capital:</span> Thyvalos</p>
+      <p class="raza-stat"><span class="stat-label">Terreno:</span> Bosques ancestrales</p>
+      <p class="raza-stat"><span class="stat-label">Fortaleza:</span> Destreza, magia natural</p>
+      <p class="raza-stat"><span class="stat-label">Debilidad:</span> Constitucion</p>
+    </div>
+    <div class="clases-lista">
+      <p><span class="clase-fav">Favorables:</span> Cazador, Druida, Mago</p>
+      <p><span class="clase-med">Medias:</span> Ladron, Clerigo</p>
+      <p><span class="clase-des">Desfavorables:</span> Guerrero, Barbaro, Paladin</p>
+    </div>
+  </div>
+
+  <div id="drows" class="raza-section">
+    <div class="raza-header">
+      <span class="raza-icon">&#128375;</span>
+      <h2 class="raza-title" style="color:#8e44ad;">Drow</h2>
+    </div>
+    <p>Los drow de Dun'Zhara viven en las profundidades, en una ciudad tallada en obsidiana donde la luz es un lujo y la traicion un arte. Gobernados por matriarcas despiadadas, dominan el veneno, la magia oscura y la intriga. Cada drow sabe que la confianza es la forma mas peligrosa de debilidad.</p>
+    <div class="raza-stats">
+      <p class="raza-stat"><span class="stat-label">Capital:</span> Dun'Zhara</p>
+      <p class="raza-stat"><span class="stat-label">Terreno:</span> Subterraneo</p>
+      <p class="raza-stat"><span class="stat-label">Fortaleza:</span> Inteligencia, sigilo</p>
+      <p class="raza-stat"><span class="stat-label">Debilidad:</span> Sensibilidad a la luz</p>
+    </div>
+    <div class="clases-lista">
+      <p><span class="clase-fav">Favorables:</span> Brujo, Ladron, Mago</p>
+      <p><span class="clase-med">Medias:</span> Clerigo, Cazador</p>
+      <p><span class="clase-des">Desfavorables:</span> Paladin, Barbaro, Druida</p>
+    </div>
+  </div>
+
+  <div id="orcos" class="raza-section">
+    <div class="raza-header">
+      <span class="raza-icon">&#9760;</span>
+      <h2 class="raza-title" style="color:#e67e22;">Orcos</h2>
+    </div>
+    <p>Los orcos de Gorzakhar habitan las tierras volcanicas del sur, donde la lava fluye como rios y el aire huele a azufre. Son una raza guerrera que venera el fuego y la fuerza bruta. Para un orco, morir en batalla es el mayor honor, y la debilidad el unico pecado imperdonable.</p>
+    <div class="raza-stats">
+      <p class="raza-stat"><span class="stat-label">Capital:</span> Gorzakhar</p>
+      <p class="raza-stat"><span class="stat-label">Terreno:</span> Volcanico, desertico</p>
+      <p class="raza-stat"><span class="stat-label">Fortaleza:</span> Fuerza, constitucion</p>
+      <p class="raza-stat"><span class="stat-label">Debilidad:</span> Inteligencia, magia</p>
+    </div>
+    <div class="clases-lista">
+      <p><span class="clase-fav">Favorables:</span> Guerrero, Barbaro, Cazador</p>
+      <p><span class="clase-med">Medias:</span> Ladron, Druida</p>
+      <p><span class="clase-des">Desfavorables:</span> Mago, Clerigo, Paladin</p>
+    </div>
+  </div>
+
+  <div id="enanos" class="raza-section">
+    <div class="raza-header">
+      <span class="raza-icon">&#9935;</span>
+      <h2 class="raza-title" style="color:#3498db;">Enanos</h2>
+    </div>
+    <p>Los enanos de Keldruun viven en las entranas de las montanas, en salones tallados en roca viva iluminados por cristales de runas. Son maestros herreros y mineros testarudos. Cavaron demasiado profundo y despertaron algo que sellan desde hace generaciones. Sus martillos no dejan de sonar.</p>
+    <div class="raza-stats">
+      <p class="raza-stat"><span class="stat-label">Capital:</span> Keldruun</p>
+      <p class="raza-stat"><span class="stat-label">Terreno:</span> Montanioso, subterraneo</p>
+      <p class="raza-stat"><span class="stat-label">Fortaleza:</span> Constitucion, resistencia</p>
+      <p class="raza-stat"><span class="stat-label">Debilidad:</span> Velocidad, agilidad</p>
+    </div>
+    <div class="clases-lista">
+      <p><span class="clase-fav">Favorables:</span> Guerrero, Paladin, Clerigo</p>
+      <p><span class="clase-med">Medias:</span> Barbaro, Cazador</p>
+      <p><span class="clase-des">Desfavorables:</span> Mago, Ladron, Druida</p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p>&copy; 2026 Zirathar</p>
+  </footer>
+  <script src="js/main.js"></script>
+</body>
+</html>

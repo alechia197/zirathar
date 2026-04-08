@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>El Mundo — Zirathar</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <style>
+    .page-header { padding-top: 80px; text-align: center; padding-bottom: 2rem; }
+    .mapa-container { max-width: 1000px; margin: 0 auto; padding: 0 2rem; }
+    .mapa-visual { position: relative; width: 100%; aspect-ratio: 16/10; background: rgba(255,255,255,0.02); border: 1px solid rgba(200,134,10,0.2); border-radius: 12px; margin-bottom: 3rem; overflow: hidden; }
+    .mapa-reino { position: absolute; padding: 1rem; text-align: center; border-radius: 8px; cursor: pointer; transition: all 0.3s; }
+    .mapa-reino:hover { transform: scale(1.1); z-index: 10; }
+    .mapa-reino-name { font-family: 'Cinzel Decorative', serif; font-size: 0.9rem; }
+    .mapa-reino-capital { font-size: 0.7rem; opacity: 0.6; }
+    .mapa-centro { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; }
+    .mapa-centro-name { font-family: 'Cinzel Decorative', serif; font-size: 1.2rem; color: var(--dorado); text-shadow: 0 0 15px rgba(200,134,10,0.5); }
+    .zona-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem; margin-top: 2rem; }
+    .zona-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 1.5rem; opacity:0; transform: translateY(20px); transition: all 0.4s; }
+    .zona-card.visible { opacity:1; transform: translateY(0); }
+    .zona-title { font-family: 'Cinzel', serif; color: var(--dorado); margin-bottom: 0.5rem; }
+    .zona-desc { font-size: 0.9rem; opacity: 0.8; }
+    .zona-level { font-family: 'Cinzel', serif; font-size: 0.8rem; color: var(--naranja); margin-top: 0.5rem; }
+    /* Lineas de conexion */
+    .mapa-visual::before { content:''; position:absolute; top:50%; left:15%; width:70%; height:1px; background: linear-gradient(90deg, rgba(231,76,60,0.3), rgba(200,134,10,0.5), rgba(52,152,219,0.3)); }
+    .mapa-visual::after { content:''; position:absolute; left:50%; top:10%; width:1px; height:80%; background: linear-gradient(180deg, rgba(39,174,96,0.3), rgba(200,134,10,0.5), rgba(230,126,34,0.3)); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Zirathar</a>
+    <ul class="nav-links">
+      <li><a href="razas.html">Razas</a></li>
+      <li><a href="clases.html">Clases</a></li>
+      <li><a href="mundo.html">Mundo</a></li>
+      <li><a href="historia.html">Historia</a></li>
+      <li><a href="mapas.html">Mapas</a></li>
+      <li><a href="conectar.html">Conectar</a></li>
+    </ul>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="lang-es">ES</button>
+      <button class="lang-btn" id="lang-en">EN</button>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1 class="section-title" data-es="El Mundo de Zirathar" data-en="The World of Zirathar">El Mundo de Zirathar</h1>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="mapa-container">
+    <div class="mapa-visual">
+      <!-- Centro: Kael'Zar -->
+      <div class="mapa-centro">
+        <p class="mapa-centro-name">Kael'Zar</p>
+        <p style="font-size:0.7rem; opacity:0.5;">Las Ruinas Prohibidas</p>
+      </div>
+
+      <!-- Humanos: Oeste -->
+      <div class="mapa-reino" style="left:5%; top:40%; background:rgba(231,76,60,0.15); border:1px solid rgba(231,76,60,0.4);">
+        <p class="mapa-reino-name" style="color:#e74c3c;">Humanos</p>
+        <p class="mapa-reino-capital">Valdheim</p>
+      </div>
+
+      <!-- Elfos: Norte -->
+      <div class="mapa-reino" style="left:38%; top:5%; background:rgba(39,174,96,0.15); border:1px solid rgba(39,174,96,0.4);">
+        <p class="mapa-reino-name" style="color:#27ae60;">Elfos</p>
+        <p class="mapa-reino-capital">Thyvalos</p>
+      </div>
+
+      <!-- Enanos: Este -->
+      <div class="mapa-reino" style="right:5%; top:40%; background:rgba(52,152,219,0.15); border:1px solid rgba(52,152,219,0.4);">
+        <p class="mapa-reino-name" style="color:#3498db;">Enanos</p>
+        <p class="mapa-reino-capital">Keldruun</p>
+      </div>
+
+      <!-- Orcos: Sur -->
+      <div class="mapa-reino" style="left:38%; bottom:5%; background:rgba(230,126,34,0.15); border:1px solid rgba(230,126,34,0.4);">
+        <p class="mapa-reino-name" style="color:#e67e22;">Orcos</p>
+        <p class="mapa-reino-capital">Gorzakhar</p>
+      </div>
+
+      <!-- Drow: Subterraneo (centro-abajo) -->
+      <div class="mapa-reino" style="right:10%; bottom:10%; background:rgba(142,68,173,0.15); border:1px solid rgba(142,68,173,0.4);">
+        <p class="mapa-reino-name" style="color:#8e44ad;">Drow</p>
+        <p class="mapa-reino-capital">Dun'Zhara</p>
+        <p style="font-size:0.6rem; opacity:0.4;">Subterraneo</p>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="font-size:1.5rem;" data-es="Zonas del Mundo" data-en="World Zones">Zonas del Mundo</h2>
+    <div class="section-line"></div>
+
+    <div class="zona-info">
+      <div class="zona-card reveal">
+        <h3 class="zona-title">Zona 0 — Capitales</h3>
+        <p class="zona-desc">Las cinco capitales: ciudades seguras con comercio, entrenamiento, establos, cementerio y zona de inicio.</p>
+        <p class="zona-level">Nivel: 1 | Zona segura</p>
+      </div>
+      <div class="zona-card reveal">
+        <h3 class="zona-title">Zona 1 — Primer Tramo</h3>
+        <p class="zona-desc">Las tierras que rodean cada capital. 8 areas por reino con mobs, lore, sub-areas y bosses de zona.</p>
+        <p class="zona-level">Nivel: 1-15</p>
+      </div>
+      <div class="zona-card reveal">
+        <h3 class="zona-title">Zona 2 — Expansion</h3>
+        <p class="zona-desc">Los caminos se alargan y el peligro crece. Nuevas criaturas, facciones hostiles y recursos mas valiosos.</p>
+        <p class="zona-level">Nivel: 15-30</p>
+      </div>
+      <div class="zona-card reveal">
+        <h3 class="zona-title">Zona 3 — Fronteras</h3>
+        <p class="zona-desc">Donde los territorios de los reinos comienzan a cruzarse. El conflicto es inevitable.</p>
+        <p class="zona-level">Nivel: 30-45</p>
+      </div>
+      <div class="zona-card reveal">
+        <h3 class="zona-title">Zona 4 — Tierras Disputadas</h3>
+        <p class="zona-desc">Territorio en disputa entre los reinos. PvP habilitado, recursos escasos y emboscadas constantes.</p>
+        <p class="zona-level">Nivel: 45-60 | PvP</p>
+      </div>
+      <div class="zona-card reveal">
+        <h3 class="zona-title">Zona 5 — Ultimo Tramo</h3>
+        <p class="zona-desc">La frontera final antes de Kael'Zar. Solo los mas fuertes sobreviven aqui. Los cinco caminos convergen.</p>
+        <p class="zona-level">Nivel: 60-80</p>
+      </div>
+    </div>
+
+    <h2 class="section-title" style="font-size:1.5rem; margin-top:3rem;" data-es="Kael'Zar — El Centro del Mundo" data-en="Kael'Zar — The Center of the World">Kael'Zar — El Centro del Mundo</h2>
+    <div class="section-line"></div>
+    <p style="text-align:center; opacity:0.7; max-width:600px; margin:0 auto 2rem;">Zona neutral donde convergen los cinco reinos. Cuatro capas de peligro creciente hasta el corazon de la Llama Oscura.</p>
+
+    <div class="zona-info">
+      <div class="zona-card reveal" style="border-color: rgba(139,69,19,0.4);">
+        <h3 class="zona-title" style="color:#8B4513;">Tierra Corrupta</h3>
+        <p class="zona-desc">La tierra misma esta enferma. Arboles retorcidos, agua envenenada y criaturas deformes acechan entre la niebla.</p>
+        <p class="zona-level">Nivel: 80-85</p>
+      </div>
+      <div class="zona-card reveal" style="border-color: rgba(169,169,169,0.4);">
+        <h3 class="zona-title" style="color:#A9A9A9;">Ruinas Exteriores</h3>
+        <p class="zona-desc">Los restos de una civilizacion olvidada. Guardianes ancestrales protegen los accesos a la ciudad interior.</p>
+        <p class="zona-level">Nivel: 85-90</p>
+      </div>
+      <div class="zona-card reveal" style="border-color: rgba(200,134,10,0.4);">
+        <h3 class="zona-title" style="color:#c8860a;">La Ciudad</h3>
+        <p class="zona-desc">Una metropolis en ruinas donde el tiempo no fluye con normalidad. Aqui la Llama Oscura susurra con claridad.</p>
+        <p class="zona-level">Nivel: 90-95</p>
+      </div>
+      <div class="zona-card reveal" style="border-color: rgba(123,47,190,0.4);">
+        <h3 class="zona-title" style="color:#7b2fbe;">Palacio Imperial</h3>
+        <p class="zona-desc">El trono de un emperador que nunca murio. Las fuerzas mas oscuras del mundo protegen este lugar. Pocos entran. Menos salen.</p>
+        <p class="zona-level">Nivel: 95-100 | Endgame</p>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer" style="margin-top:4rem;">
+    <p>&copy; 2026 Zirathar</p>
+  </footer>
+  <script src="js/main.js"></script>
+</body>
+</html>

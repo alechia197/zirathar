@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Clases — Zirathar</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <style>
+    .clases-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
+    .clase-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 8px; padding: 2rem; transition: all 0.4s; opacity:0; transform: translateY(30px); }
+    .clase-card.visible { opacity:1; transform: translateY(0); }
+    .clase-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.4); }
+    .clase-icon { font-size: 2rem; margin-bottom: 0.8rem; display: block; }
+    .clase-name { font-family: 'Cinzel Decorative', serif; font-size: 1.3rem; color: var(--dorado); margin-bottom: 0.5rem; }
+    .clase-tipo { font-family: 'Cinzel', serif; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 2px; opacity: 0.5; margin-bottom: 1rem; }
+    .clase-desc { font-size: 0.95rem; opacity: 0.85; line-height: 1.6; }
+    .clase-recurso { margin-top: 1rem; font-family: 'Cinzel', serif; font-size: 0.85rem; }
+    .recurso-mana { color: #3498db; }
+    .recurso-energia { color: #f39c12; }
+    .recurso-ambos { color: #9b59b6; }
+    .page-header { padding-top: 80px; text-align: center; padding-bottom: 2rem; }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Zirathar</a>
+    <ul class="nav-links">
+      <li><a href="razas.html">Razas</a></li>
+      <li><a href="clases.html">Clases</a></li>
+      <li><a href="mundo.html">Mundo</a></li>
+      <li><a href="historia.html">Historia</a></li>
+      <li><a href="mapas.html">Mapas</a></li>
+      <li><a href="conectar.html">Conectar</a></li>
+    </ul>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="lang-es">ES</button>
+      <button class="lang-btn" id="lang-en">EN</button>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1 class="section-title">Las Clases de Zirathar</h1>
+    <div class="section-line"></div>
+    <p style="opacity:0.6; max-width:600px; margin:0 auto;">Cada clase define tu camino en el mundo. Elige sabiamente: no hay vuelta atras.</p>
+  </div>
+
+  <div class="clases-grid">
+    <div class="clase-card reveal">
+      <span class="clase-icon">&#9876;</span>
+      <h3 class="clase-name">Guerrero</h3>
+      <p class="clase-tipo">Combate cuerpo a cuerpo</p>
+      <p class="clase-desc">Maestro del acero y la disciplina. El guerrero domina todas las armas y armaduras. En el campo de batalla, es el pilar inamovible que sostiene la linea.</p>
+      <p class="clase-recurso recurso-energia">Recurso: Energia</p>
+    </div>
+    <div class="clase-card reveal">
+      <span class="clase-icon">&#9889;</span>
+      <h3 class="clase-name">Barbaro</h3>
+      <p class="clase-tipo">Furia primordial</p>
+      <p class="clase-desc">Guerrero salvaje alimentado por la ira. En estado de furia, ignora el dolor y golpea con fuerza devastadora. La civilizacion es una jaula para el barbaro.</p>
+      <p class="clase-recurso recurso-energia">Recurso: Energia</p>
+    </div>
+    <div class="clase-card reveal">
+      <span class="clase-icon">&#128293;</span>
+      <h3 class="clase-name">Berserker</h3>
+      <p class="clase-tipo">Furia descontrolada</p>
+      <p class="clase-desc">La evolucion extrema del barbaro. Entra en un estado de trance donde no distingue amigo de enemigo. Su poder destructivo no tiene igual, pero el precio es la cordura.</p>
+      <p class="clase-recurso recurso-energia">Recurso: Energia</p>
+    </div>
+    <div class="clase-card reveal">
+      <span class="clase-icon">&#128737;</span>
+      <h3 class="clase-name">Paladin</h3>
+      <p class="clase-tipo">Guerrero sagrado</p>
+      <p class="clase-desc">Caballero consagrado por la fe. Combina el poder marcial con la magia divina. Puede sanar aliados y castigar a los impuros con luz sagrada.</p>
+      <p class="clase-recurso recurso-ambos">Recurso: Mana + Energia</p>
+    </div>
+    <div class="clase-card reveal">
+      <span class="clase-icon">&#128128;</span>
+      <h3 class="clase-name">Caballero Oscuro</h3>
+      <p class="clase-tipo">Guerrero profano</p>
+      <p class="clase-desc">El reflejo oscuro del paladin. Canaliza energia necrotica para drenar vida, maldecir enemigos y levantarse de la muerte. La oscuridad es su armadura y su espada.</p>
+      <p class="clase-recurso recurso-ambos">Recurso: Mana + Energia</p>
+    </div>
+    <div class="clase-card reveal">
+      <span class="clase-icon">&#127993;</span>
+      <h3 class="clase-name">Cazador</h3>
+      <p class="clase-tipo">Combate a distancia</p>
+      <p class="clase-desc">Senor de los paramos y las bestias. Experto en arcos, trampas y rastreo. Puede domar animales salvajes que luchan a su lado.</p>
+      <p class="clase-recurso recurso-energia">Recurso: Energia</p>
+    </div>
+    <div class="clase-card reveal">
+      <span class="clase-icon">&#128481;</span>
+      <h3 class="clase-name">Merodeador</h3>
+      <p class="clase-tipo">Sigilo y precision</p>
+      <p class="clase-desc">Maestro del sigilo, el veneno y el golpe critico. Donde otros luchan de frente, el merodeador ataca desde las sombras y desaparece antes de que lo vean.</p>
+      <p class="clase-recurso recurso-energia">Recurso: Energia</p>
+    </div>
+    <div class="clase-card reveal">
+      <span class="clase-icon">&#127757;</span>
+      <h3 class="clase-name">Explorador</h3>
+      <p class="clase-tipo">Supervivencia y rastreo</p>
+      <p class="clase-desc">Conocedor de cada sendero y cada peligro. El explorador sobrevive donde otros perecen. Domina el terreno, las trampas y el combate a distancia media.</p>
+      <p class="clase-recurso recurso-energia">Recurso: Energia</p>
+    </div>
+    <div class="clase-card reveal">
+      <span class="clase-icon">&#128301;</span>
+      <h3 class="clase-name">Mago</h3>
+      <p class="clase-tipo">Magia arcana</p>
+      <p class="clase-desc">Estudioso de las artes arcanas. Fragil en cuerpo pero devastador en poder. Sus hechizos pueden alterar la realidad misma.</p>
+      <p class="clase-recurso recurso-mana">Recurso: Mana</p>
+    </div>
+    <div class="clase-card reveal">
+      <span class="clase-icon">&#128128;</span>
+      <h3 class="clase-name">Brujo</h3>
+      <p class="clase-tipo">Magia oscura</p>
+      <p class="clase-desc">Pactante con fuerzas prohibidas. Su poder proviene de entidades oscuras. Cada hechizo tiene un precio, y la locura acecha al imprudente.</p>
+      <p class="clase-recurso recurso-mana">Recurso: Mana</p>
+    </div>
+    <div class="clase-card reveal">
+      <span class="clase-icon">&#9764;</span>
+      <h3 class="clase-name">Clerigo</h3>
+      <p class="clase-tipo">Magia divina</p>
+      <p class="clase-desc">Servidor de los dioses. Canaliza poder divino para sanar, proteger y destruir no-muertos. Indispensable en cualquier grupo.</p>
+      <p class="clase-recurso recurso-mana">Recurso: Mana</p>
+    </div>
+  </div>
+
+  <footer class="footer" style="margin-top:4rem;">
+    <p>&copy; 2026 Zirathar</p>
+  </footer>
+  <script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zirathar — La Historia de los Cinco Reinos</title>
+  <meta name="description" content="Zirathar: MUD de fantasia oscura. Cinco razas, diez clases, combate tactico y un mundo vivo con NPCs con inteligencia artificial.">
+  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&#x1f525;</text></svg>">
+</head>
+<body>
+
+  <!-- ═══ NAV ═══ -->
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Zirathar</a>
+    <ul class="nav-links">
+      <li><a href="razas.html" data-es="Razas" data-en="Races">Razas</a></li>
+      <li><a href="clases.html" data-es="Clases" data-en="Classes">Clases</a></li>
+      <li><a href="mundo.html" data-es="Mundo" data-en="World">Mundo</a></li>
+      <li><a href="historia.html" data-es="Historia" data-en="Lore">Historia</a></li>
+      <li><a href="mapas.html">Mapas</a></li>
+      <li><a href="conectar.html" data-es="Conectar" data-en="Connect">Conectar</a></li>
+    </ul>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="lang-es">ES</button>
+      <button class="lang-btn" id="lang-en">EN</button>
+    </div>
+  </nav>
+
+  <!-- ═══ HERO ═══ -->
+  <section class="hero">
+    <canvas id="hero-fire" class="hero-canvas"></canvas>
+    <div class="hero-content">
+      <h1 class="hero-title">ZIRATHAR</h1>
+      <p class="hero-subtitle" data-es="La historia de los cinco reinos" data-en="The tale of the five kingdoms">La historia de los cinco reinos</p>
+      <div class="hero-buttons">
+        <a href="conectar.html" class="btn btn-primary" data-es="Comenzar la Aventura" data-en="Begin the Adventure">Comenzar la Aventura</a>
+        <a href="mundo.html" class="btn btn-secondary" data-es="Explorar el Mundo" data-en="Explore the World">Explorar el Mundo</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ REINOS ═══ -->
+  <section id="reinos">
+    <h2 class="section-title" data-es="Los Cinco Reinos" data-en="The Five Kingdoms">Los Cinco Reinos</h2>
+    <div class="section-line"></div>
+
+    <div class="reinos-grid">
+
+      <div class="reino-card reino-humanos">
+        <span class="reino-icon">&#9876;</span>
+        <h3 class="reino-name" data-es="Humanos" data-en="Humans">Humanos</h3>
+        <p class="reino-capital">Valdheim</p>
+        <p class="reino-lore" data-es="Forjados en la guerra y la ambicion. Su imperio se levanta sobre las cenizas de los que cayeron antes." data-en="Forged in war and ambition. Their empire rises on the ashes of those who fell before.">Forjados en la guerra y la ambicion. Su imperio se levanta sobre las cenizas de los que cayeron antes.</p>
+        <a href="razas.html#humanos" class="reino-link" data-es="Conocer mas" data-en="Learn more">Conocer mas</a>
+      </div>
+
+      <div class="reino-card reino-elfos">
+        <span class="reino-icon">&#127811;</span>
+        <h3 class="reino-name" data-es="Elfos" data-en="Elves">Elfos</h3>
+        <p class="reino-capital">Thyvalos</p>
+        <p class="reino-lore" data-es="Guardianes del bosque ancestral. Sus raices son tan profundas como su orgullo, y sus flechas, igual de certeras." data-en="Guardians of the ancestral forest. Their roots run as deep as their pride, and their arrows just as true.">Guardianes del bosque ancestral. Sus raices son tan profundas como su orgullo, y sus flechas, igual de certeras.</p>
+        <a href="razas.html#elfos" class="reino-link" data-es="Conocer mas" data-en="Learn more">Conocer mas</a>
+      </div>
+
+      <div class="reino-card reino-drows">
+        <span class="reino-icon">&#128375;</span>
+        <h3 class="reino-name">Drow</h3>
+        <p class="reino-capital">Dun'Zhara</p>
+        <p class="reino-lore" data-es="Nacidos en la oscuridad eterna. Donde otros ven sombras, ellos ven oportunidad. Sus alianzas son tan fragiles como sus venenos son letales." data-en="Born in eternal darkness. Where others see shadows, they see opportunity. Their alliances are as fragile as their poisons are lethal.">Nacidos en la oscuridad eterna. Donde otros ven sombras, ellos ven oportunidad. Sus alianzas son tan fragiles como sus venenos son letales.</p>
+        <a href="razas.html#drows" class="reino-link" data-es="Conocer mas" data-en="Learn more">Conocer mas</a>
+      </div>
+
+      <div class="reino-card reino-orcos">
+        <span class="reino-icon">&#9760;</span>
+        <h3 class="reino-name" data-es="Orcos" data-en="Orcs">Orcos</h3>
+        <p class="reino-capital">Gorzakhar</p>
+        <p class="reino-lore" data-es="El fuego arde en su sangre. No conquistan por codicia sino porque la guerra es lo unico que los mantiene vivos." data-en="Fire burns in their blood. They don't conquer out of greed but because war is the only thing that keeps them alive.">El fuego arde en su sangre. No conquistan por codicia sino porque la guerra es lo unico que los mantiene vivos.</p>
+        <a href="razas.html#orcos" class="reino-link" data-es="Conocer mas" data-en="Learn more">Conocer mas</a>
+      </div>
+
+      <div class="reino-card reino-enanos">
+        <span class="reino-icon">&#9935;</span>
+        <h3 class="reino-name" data-es="Enanos" data-en="Dwarves">Enanos</h3>
+        <p class="reino-capital">Keldruun</p>
+        <p class="reino-lore" data-es="Cavaron demasiado profundo y encontraron algo que no deberian haber despertado. Aun asi, sus martillos no dejaron de sonar." data-en="They dug too deep and found something that should not have been awakened. Still, their hammers never stopped ringing.">Cavaron demasiado profundo y encontraron algo que no deberian haber despertado. Aun asi, sus martillos no dejaron de sonar.</p>
+        <a href="razas.html#enanos" class="reino-link" data-es="Conocer mas" data-en="Learn more">Conocer mas</a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ═══ LORE ═══ -->
+  <section class="lore-section">
+    <div class="section-line"></div>
+    <blockquote class="lore-quote reveal" data-es="El Vigia Eterno lleva 847 anios observando las ruinas. Cuando le preguntaron que veia, respondio una sola palabra: Pronto." data-en="The Eternal Watchman has been observing the ruins for 847 years. When asked what he saw, he answered with a single word: Soon.">
+      El Vigia Eterno lleva 847 anios observando las ruinas. Cuando le preguntaron que veia, respondio una sola palabra: <em>Pronto.</em>
+    </blockquote>
+    <p class="lore-author" data-es="&mdash; Cronicas de la Llama Oscura, Vol. III" data-en="&mdash; Chronicles of the Dark Flame, Vol. III">&mdash; Cronicas de la Llama Oscura, Vol. III</p>
+  </section>
+
+  <!-- ═══ CONECTAR ═══ -->
+  <section class="conectar-section" id="conectar">
+    <h2 class="section-title" data-es="Unete al Mundo" data-en="Join the World">Unete al Mundo</h2>
+    <div class="section-line"></div>
+
+    <div class="conectar-box reveal">
+      <p class="server-info" data-es="Servidor MUD" data-en="MUD Server">Servidor MUD</p>
+      <div class="server-ip">zirathar.com : 4000</div>
+      <p style="margin: 1rem 0; opacity: 0.6;" data-es="Conectate con cualquier cliente MUD (Mudlet, TinTin++, MUSHclient)" data-en="Connect with any MUD client (Mudlet, TinTin++, MUSHclient)">Conectate con cualquier cliente MUD (Mudlet, TinTin++, MUSHclient)</p>
+      <a href="conectar.html" class="btn btn-primary" style="margin-top: 1rem; display: inline-block;" data-es="Como Conectar" data-en="How to Connect">Como Conectar</a>
+    </div>
+  </section>
+
+  <!-- ═══ FOOTER ═══ -->
+  <footer class="footer">
+    <p>&copy; 2026 Zirathar &mdash; <span data-es="Todos los derechos reservados" data-en="All rights reserved">Todos los derechos reservados</span></p>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>

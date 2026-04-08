@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Conectar — Zirathar</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <style>
+    .page-header { padding-top: 80px; text-align: center; padding-bottom: 2rem; }
+    .conectar-content { max-width: 800px; margin: 0 auto; padding: 0 2rem; }
+    .paso { display: flex; gap: 1.5rem; margin-bottom: 2.5rem; align-items: flex-start; opacity:0; transform: translateY(20px); transition: all 0.4s; }
+    .paso.visible { opacity:1; transform: translateY(0); }
+    .paso-num { font-family: 'Cinzel Decorative', serif; font-size: 2rem; color: var(--dorado); min-width: 50px; text-align: center; line-height: 1; padding-top: 5px; }
+    .paso-content h3 { font-family: 'Cinzel', serif; color: var(--naranja); margin-bottom: 0.5rem; }
+    .paso-content p { opacity: 0.85; }
+    .paso-content a { color: var(--dorado); }
+    .cliente-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .cliente-card { background: rgba(255,255,255,0.03); border: 1px solid rgba(200,134,10,0.2); border-radius: 8px; padding: 1.5rem; text-align: center; transition: all 0.3s; }
+    .cliente-card:hover { border-color: var(--dorado); transform: translateY(-3px); }
+    .cliente-name { font-family: 'Cinzel', serif; color: var(--dorado); font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .cliente-desc { font-size: 0.85rem; opacity: 0.6; margin-bottom: 1rem; }
+    .cliente-link { color: var(--naranja); font-size: 0.85rem; text-decoration: none; }
+    .server-big { text-align: center; margin: 3rem 0; }
+    .server-big .server-ip { font-size: 1.8rem; padding: 15px 30px; }
+    code { background: rgba(200,134,10,0.1); padding: 2px 8px; border-radius: 4px; font-size: 0.9rem; color: var(--naranja); }
+  </style>
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="nav-logo">Zirathar</a>
+    <ul class="nav-links">
+      <li><a href="razas.html">Razas</a></li>
+      <li><a href="clases.html">Clases</a></li>
+      <li><a href="mundo.html">Mundo</a></li>
+      <li><a href="historia.html">Historia</a></li>
+      <li><a href="mapas.html">Mapas</a></li>
+      <li><a href="conectar.html">Conectar</a></li>
+    </ul>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="lang-es">ES</button>
+      <button class="lang-btn" id="lang-en">EN</button>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <h1 class="section-title" data-es="Como Conectar" data-en="How to Connect">Como Conectar</h1>
+    <div class="section-line"></div>
+  </div>
+
+  <div class="conectar-content">
+
+    <div class="server-big">
+      <p style="font-family: 'Cinzel', serif; margin-bottom: 0.5rem; opacity: 0.6;" data-es="Servidor" data-en="Server">Servidor</p>
+      <div class="server-ip">zirathar.com : 4000</div>
+    </div>
+
+    <div class="paso reveal">
+      <div class="paso-num">1</div>
+      <div class="paso-content">
+        <h3 data-es="Descarga un cliente MUD" data-en="Download a MUD client">Descarga un cliente MUD</h3>
+        <p data-es="Necesitas un cliente para conectarte al mundo. Estos son los mas populares:" data-en="You need a client to connect to the world. These are the most popular:">Necesitas un cliente para conectarte al mundo. Estos son los mas populares:</p>
+        <div class="cliente-grid">
+          <div class="cliente-card">
+            <p class="cliente-name">Mudlet</p>
+            <p class="cliente-desc">El mas popular. Graficos, mapas automaticos, scripting.</p>
+            <a href="https://www.mudlet.org" class="cliente-link" target="_blank">mudlet.org</a>
+          </div>
+          <div class="cliente-card">
+            <p class="cliente-name">MUSHclient</p>
+            <p class="cliente-desc">Clasico para Windows. Ligero y configurable.</p>
+            <a href="https://www.gammon.com.au/mushclient" class="cliente-link" target="_blank">gammon.com.au</a>
+          </div>
+          <div class="cliente-card">
+            <p class="cliente-name">TinTin++</p>
+            <p class="cliente-desc">Terminal. Para los que prefieren la linea de comandos.</p>
+            <a href="https://tintin.mudhalla.net" class="cliente-link" target="_blank">tintin.mudhalla.net</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="paso reveal">
+      <div class="paso-num">2</div>
+      <div class="paso-content">
+        <h3 data-es="Configura la conexion" data-en="Configure the connection">Configura la conexion</h3>
+        <p>Host: <code>zirathar.com</code></p>
+        <p>Puerto: <code>4000</code></p>
+        <p style="margin-top:0.5rem; opacity:0.6;" data-es="En Mudlet: New Profile, ingresa los datos y conecta." data-en="In Mudlet: New Profile, enter the data and connect.">En Mudlet: New Profile, ingresa los datos y conecta.</p>
+      </div>
+    </div>
+
+    <div class="paso reveal">
+      <div class="paso-num">3</div>
+      <div class="paso-content">
+        <h3 data-es="Crea tu personaje" data-en="Create your character">Crea tu personaje</h3>
+        <p data-es="Al conectarte veras la pantalla de bienvenida. Crea una cuenta, elige tu nombre, raza y clase. El mundo te espera." data-en="When you connect you'll see the welcome screen. Create an account, choose your name, race and class. The world awaits.">Al conectarte veras la pantalla de bienvenida. Crea una cuenta, elige tu nombre, raza y clase. El mundo te espera.</p>
+      </div>
+    </div>
+
+    <div class="paso reveal">
+      <div class="paso-num">4</div>
+      <div class="paso-content">
+        <h3 data-es="Explora y sobrevive" data-en="Explore and survive">Explora y sobrevive</h3>
+        <p data-es="Habla con NPCs, explora las zonas, lucha contra mobs, sube de nivel y descubre los secretos de los cinco reinos. La Llama Oscura espera en Kael'Zar." data-en="Talk to NPCs, explore zones, fight mobs, level up and discover the secrets of the five kingdoms. The Dark Flame awaits in Kael'Zar.">Habla con NPCs, explora las zonas, lucha contra mobs, sube de nivel y descubre los secretos de los cinco reinos. La Llama Oscura espera en Kael'Zar.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer class="footer" style="margin-top:4rem;">
+    <p>&copy; 2026 Zirathar</p>
+  </footer>
+  <script src="js/main.js"></script>
+</body>
+</html>

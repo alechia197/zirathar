@@ -1,0 +1,396 @@
+/* ═══════════════════════════════════════════
+   ZIRATHAR — Estilos compartidos
+   ═══════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Cinzel:wght@400;600;700&family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400&display=swap');
+
+:root {
+  --fondo: #080402;
+  --dorado: #c8860a;
+  --naranja: #ff8c42;
+  --pergamino: #f0e6d3;
+  --purpura: #7b2fbe;
+  --rojo: #e74c3c;
+  --verde: #27ae60;
+  --violeta: #8e44ad;
+  --naranja-reino: #e67e22;
+  --azul: #3498db;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--fondo);
+  color: var(--pergamino);
+  font-family: 'Crimson Text', Georgia, serif;
+  font-size: 18px;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* ═══ NAV ═══ */
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background: rgba(8, 4, 2, 0.92);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(200, 134, 10, 0.3);
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+}
+
+.nav-logo {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--dorado);
+  text-decoration: none;
+  text-shadow: 0 0 10px rgba(200, 134, 10, 0.5);
+}
+
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  color: var(--pergamino);
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: color 0.3s, text-shadow 0.3s;
+}
+
+.nav-links a:hover {
+  color: var(--naranja);
+  text-shadow: 0 0 8px rgba(255, 140, 66, 0.5);
+}
+
+.lang-toggle {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.lang-btn {
+  background: none;
+  border: 1px solid var(--dorado);
+  color: var(--pergamino);
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-transform: uppercase;
+}
+
+.lang-btn.active {
+  background: var(--dorado);
+  color: var(--fondo);
+}
+
+.lang-btn:hover {
+  background: rgba(200, 134, 10, 0.3);
+}
+
+/* ═══ HERO ═══ */
+.hero {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+}
+
+.hero-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 900;
+  color: var(--naranja);
+  text-shadow:
+    0 0 20px rgba(255, 107, 53, 0.8),
+    0 0 40px rgba(255, 107, 53, 0.5),
+    0 0 80px rgba(255, 107, 53, 0.3),
+    0 4px 8px rgba(0, 0, 0, 0.8);
+  letter-spacing: 8px;
+  margin-bottom: 1rem;
+  animation: flamePulse 3s ease-in-out infinite alternate;
+}
+
+@keyframes flamePulse {
+  0% { text-shadow: 0 0 20px rgba(255, 107, 53, 0.8), 0 0 40px rgba(255, 107, 53, 0.5), 0 0 80px rgba(255, 107, 53, 0.3); }
+  100% { text-shadow: 0 0 30px rgba(255, 140, 66, 1), 0 0 60px rgba(255, 140, 66, 0.7), 0 0 100px rgba(200, 134, 10, 0.4); }
+}
+
+.hero-subtitle {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1rem, 2.5vw, 1.5rem);
+  color: var(--pergamino);
+  opacity: 0.85;
+  margin-bottom: 2.5rem;
+  letter-spacing: 3px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.btn {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 14px 32px;
+  border: 2px solid var(--dorado);
+  text-decoration: none;
+  transition: all 0.3s;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--naranja), var(--dorado));
+  color: var(--fondo);
+  border-color: var(--naranja);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #ff6b35, var(--naranja));
+  box-shadow: 0 0 20px rgba(255, 140, 66, 0.5);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--pergamino);
+}
+
+.btn-secondary:hover {
+  background: rgba(200, 134, 10, 0.15);
+  box-shadow: 0 0 15px rgba(200, 134, 10, 0.3);
+  transform: translateY(-2px);
+}
+
+/* ═══ SECCIONES ═══ */
+section {
+  padding: 5rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: clamp(1.8rem, 4vw, 2.5rem);
+  color: var(--dorado);
+  text-align: center;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px rgba(200, 134, 10, 0.3);
+}
+
+.section-line {
+  width: 80px;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--dorado), transparent);
+  margin: 0 auto 3rem;
+}
+
+/* ═══ REINOS / CARDS ═══ */
+.reinos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.reino-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  transition: all 0.4s;
+  opacity: 0;
+  transform: translateY(30px);
+}
+
+.reino-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reino-card:hover {
+  transform: translateY(-8px);
+  border-color: var(--color-reino, var(--dorado));
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4), 0 0 15px var(--glow-color, rgba(200, 134, 10, 0.2));
+}
+
+.reino-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.reino-name {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.3rem;
+  margin-bottom: 0.3rem;
+}
+
+.reino-capital {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  opacity: 0.6;
+  margin-bottom: 1rem;
+  letter-spacing: 1px;
+}
+
+.reino-lore {
+  font-style: italic;
+  font-size: 0.95rem;
+  opacity: 0.8;
+  line-height: 1.5;
+  margin-bottom: 1.2rem;
+}
+
+.reino-link {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+/* Colores por reino */
+.reino-humanos { --color-reino: #e74c3c; --glow-color: rgba(231, 76, 60, 0.3); }
+.reino-humanos .reino-name, .reino-humanos .reino-link { color: #e74c3c; }
+
+.reino-elfos { --color-reino: #27ae60; --glow-color: rgba(39, 174, 96, 0.3); }
+.reino-elfos .reino-name, .reino-elfos .reino-link { color: #27ae60; }
+
+.reino-drows { --color-reino: #8e44ad; --glow-color: rgba(142, 68, 173, 0.3); }
+.reino-drows .reino-name, .reino-drows .reino-link { color: #8e44ad; }
+
+.reino-orcos { --color-reino: #e67e22; --glow-color: rgba(230, 126, 34, 0.3); }
+.reino-orcos .reino-name, .reino-orcos .reino-link { color: #e67e22; }
+
+.reino-enanos { --color-reino: #3498db; --glow-color: rgba(52, 152, 219, 0.3); }
+.reino-enanos .reino-name, .reino-enanos .reino-link { color: #3498db; }
+
+/* ═══ LORE QUOTE ═══ */
+.lore-section {
+  text-align: center;
+  padding: 4rem 2rem;
+  position: relative;
+}
+
+.lore-quote {
+  font-family: 'Crimson Text', serif;
+  font-style: italic;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  color: var(--pergamino);
+  opacity: 0.8;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.8;
+  padding: 2rem;
+  border-left: 3px solid var(--dorado);
+  text-align: left;
+}
+
+.lore-author {
+  font-family: 'Cinzel', serif;
+  font-size: 0.9rem;
+  color: var(--dorado);
+  margin-top: 1.5rem;
+  text-align: right;
+  opacity: 0.7;
+}
+
+/* ═══ CONECTAR ═══ */
+.conectar-section {
+  text-align: center;
+}
+
+.conectar-box {
+  background: rgba(200, 134, 10, 0.05);
+  border: 1px solid rgba(200, 134, 10, 0.2);
+  border-radius: 12px;
+  padding: 3rem;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.server-info {
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.server-ip {
+  font-family: monospace;
+  font-size: 1.3rem;
+  color: var(--naranja);
+  background: rgba(255, 140, 66, 0.1);
+  padding: 8px 20px;
+  border-radius: 6px;
+  display: inline-block;
+  margin: 1rem 0;
+  letter-spacing: 1px;
+}
+
+/* ═══ FOOTER ═══ */
+.footer {
+  text-align: center;
+  padding: 2rem;
+  border-top: 1px solid rgba(200, 134, 10, 0.15);
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  opacity: 0.5;
+  letter-spacing: 2px;
+}
+
+/* ═══ RESPONSIVE ═══ */
+@media (max-width: 768px) {
+  .nav { padding: 0 1rem; }
+  .nav-links { gap: 1rem; }
+  .nav-links a { font-size: 0.75rem; letter-spacing: 1px; }
+  .hero-buttons { flex-direction: column; align-items: center; }
+  .reinos-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 480px) {
+  .nav-links { display: none; }
+  .reinos-grid { grid-template-columns: 1fr; }
+}
