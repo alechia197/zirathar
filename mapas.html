@@ -40,14 +40,34 @@
     .sala-node:hover { transform: scale(1.8); z-index: 10; }
     .sala-node.segura { border: 2px solid rgba(39,174,96,0.8); }
 
-    .sala-tooltip { display: none; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.95); border: 1px solid rgba(200,134,10,0.4); border-radius: 4px; padding: 0.4rem 0.6rem; white-space: nowrap; font-size: 0.75rem; color: #ddd; z-index: 100; pointer-events: none; }
-    .sala-node:hover .sala-tooltip { display: block; }
-
     .exit-line { position: absolute; background: rgba(255,255,255,0.12); z-index: 1; }
+
+    /* Layout mapa + panel */
+    .mapa-layout { display: grid; grid-template-columns: 1fr 320px; gap: 1rem; }
+
+    /* Panel informativo */
+    .info-panel { background: rgba(0,0,0,0.5); border: 1px solid rgba(200,134,10,0.2); border-radius: 8px; padding: 1.2rem; min-height: 400px; max-height: 600px; overflow-y: auto; }
+    .info-panel-empty { text-align: center; opacity: 0.3; padding-top: 4rem; font-style: italic; }
+    .info-panel-title { font-family: 'Cinzel', serif; font-size: 1rem; color: var(--dorado); margin-bottom: 0.2rem; }
+    .info-panel-area { font-size: 0.8rem; opacity: 0.5; margin-bottom: 0.8rem; }
+    .info-panel-section { margin-bottom: 0.8rem; }
+    .info-panel-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1.5px; color: var(--dorado); opacity: 0.6; margin-bottom: 0.2rem; }
+    .info-panel-text { font-size: 0.85rem; line-height: 1.6; opacity: 0.8; }
+    .info-panel-pista { background: rgba(200,134,10,0.06); border-left: 2px solid rgba(200,134,10,0.4); padding: 0.5rem 0.8rem; border-radius: 0 4px 4px 0; font-style: italic; font-size: 0.8rem; margin-top: 0.3rem; }
+    .info-panel-tags { display: flex; flex-wrap: wrap; gap: 0.3rem; margin-top: 0.3rem; }
+    .info-tag { font-size: 0.7rem; padding: 0.15rem 0.5rem; border-radius: 3px; border: 1px solid rgba(255,255,255,0.1); }
+    .info-tag.pve { border-color: rgba(39,174,96,0.4); color: #27ae60; }
+    .info-tag.pvp { border-color: rgba(231,76,60,0.4); color: #e74c3c; }
+    .info-tag.raza { border-color: rgba(200,134,10,0.4); color: #c8860a; }
+    .info-panel-stats { display: flex; gap: 1rem; flex-wrap: wrap; margin-top: 0.3rem; }
+    .info-stat { font-size: 0.75rem; opacity: 0.6; }
+    .info-stat strong { color: #ddd; }
+    .info-panel-terreno { display: inline-block; font-size: 0.7rem; padding: 0.1rem 0.4rem; border-radius: 3px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); margin-right: 0.3rem; }
 
     /* Areas legend */
     .areas-legend { display: flex; flex-wrap: wrap; gap: 0.8rem; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.06); }
-    .area-chip { font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 3px; display: flex; align-items: center; gap: 0.3rem; }
+    .area-chip { font-size: 0.75rem; padding: 0.2rem 0.6rem; border-radius: 3px; display: flex; align-items: center; gap: 0.3rem; cursor: pointer; transition: all 0.2s; }
+    .area-chip:hover { background: rgba(255,255,255,0.05); }
     .area-dot { width: 8px; height: 8px; border-radius: 2px; }
 
     /* Stats */
@@ -57,6 +77,11 @@
 
     /* Empty state */
     .empty-msg { text-align: center; padding: 3rem; opacity: 0.4; font-style: italic; }
+
+    @media (max-width: 800px) {
+      .mapa-layout { grid-template-columns: 1fr; }
+      .info-panel { min-height: auto; max-height: 300px; }
+    }
 
     @media (max-width: 600px) {
       .reino-btn { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
@@ -230,7 +255,13 @@ let currentZona = 0;
 async function init() {
   try {
     const resp = await fetch("data/mapas.json");
-    mapData = await resp.json();
+    const raw = await resp.json();
+    // Soportar formato viejo (plano) y nuevo (zonas+areas)
+    if (raw.zonas) {
+      mapData = raw;
+    } else {
+      mapData = { zonas: raw, areas: {} };
+    }
   } catch(e) {
     document.getElementById("zonaContent").innerHTML = '<p class="empty-msg">No se pudieron cargar los datos del mapa.</p>';
     return;
@@ -268,7 +299,7 @@ function selectReino(reino) {
 
   // Buscar zonas disponibles para este reino
   const zonas = [];
-  for (const key of Object.keys(mapData)) {
+  for (const key of Object.keys(mapData.zonas || mapData)) {
     if (key.startsWith(reino + "_z")) {
       const z = parseInt(key.split("_z")[1]);
       if (!zonas.includes(z)) zonas.push(z);
@@ -302,7 +333,7 @@ function selectZona(z) {
 
 function renderZona() {
   const key = `${currentReino}_z${currentZona}`;
-  const data = mapData[key];
+  const data = (mapData.zonas || mapData)[key];
   const lore = ZONA_LORE[key] || {};
   const reinoInfo = REINOS[currentReino];
   const container = document.getElementById("zonaContent");
@@ -332,18 +363,25 @@ function renderZona() {
   if (seguras > 0) html += `<span class="stat-item"><strong>${seguras}</strong> salas seguras</span>`;
   html += '</div>';
 
-  // Mapa
-  html += '<div class="mapa-grid"><div class="mapa-canvas" id="mapaCanvas"></div></div>';
+  // Layout: mapa + panel informativo
+  html += '<div class="mapa-layout">';
+  html += '<div><div class="mapa-grid"><div class="mapa-canvas" id="mapaCanvas"></div></div>';
 
   // Leyenda de areas
   if (areas.length > 0) {
     html += '<div class="areas-legend">';
     areas.forEach((a, i) => {
       const color = AREA_COLORS[i % AREA_COLORS.length];
-      html += `<span class="area-chip"><span class="area-dot" style="background:${color}"></span>${a}</span>`;
+      const safeA = a.replace(/'/g, "\\'");
+      html += `<span class="area-chip" onclick="showAreaInfo('${safeA}')"><span class="area-dot" style="background:${color}"></span>${a}</span>`;
     });
     html += '</div>';
   }
+  html += '</div>';
+
+  // Panel informativo lateral
+  html += '<div class="info-panel" id="infoPanel"><div class="info-panel-empty">Pasa el mouse sobre una sala<br>o hace click en un area<br>para ver informacion.</div></div>';
+  html += '</div>';
 
   container.innerHTML = html;
 
@@ -461,7 +499,7 @@ function renderMapNodes(data, areas) {
     });
   });
 
-  // Dibujar nodos
+  // Dibujar nodos con hover -> panel info
   salas.forEach(sala => {
     const pos = positions[sala.id];
     if (!pos) return;
@@ -475,14 +513,125 @@ function renderMapNodes(data, areas) {
     node.style.top = pos.y + "px";
     node.style.background = color;
 
-    const tooltip = document.createElement("div");
-    tooltip.className = "sala-tooltip";
-    tooltip.textContent = sala.nombre + (sala.area ? ` (${sala.area})` : "");
-    node.appendChild(tooltip);
+    node.addEventListener("mouseenter", () => showSalaInfo(sala, color));
+    node.addEventListener("click", () => showAreaInfo(sala.area));
 
     canvas.appendChild(node);
   });
 }
+
+// ═══════════════════════════════════════════════════
+// PANEL INFORMATIVO
+// ═══════════════════════════════════════════════════
+
+function showSalaInfo(sala, color) {
+  const panel = document.getElementById("infoPanel");
+  if (!panel) return;
+
+  const areaKey = `${currentReino}_z${currentZona}_${sala.area}`;
+  const areaData = (mapData.areas || {})[areaKey] || {};
+  const areaLore = AREA_LORE[areaKey] || AREA_LORE[sala.area] || {};
+
+  let html = `<div class="info-panel-title" style="color:${color}">${sala.nombre}</div>`;
+  if (sala.area) html += `<div class="info-panel-area">${sala.area}</div>`;
+
+  // Terreno
+  if (sala.terreno) {
+    html += `<div class="info-panel-section"><span class="info-panel-terreno">${TERRENO_ICONS[sala.terreno] || ""} ${sala.terreno}</span>`;
+    if (sala.zona_segura) html += `<span class="info-panel-terreno" style="border-color:rgba(39,174,96,0.4);color:#27ae60;">zona segura</span>`;
+    html += `</div>`;
+  }
+
+  // Descripcion del area
+  if (areaLore.desc) {
+    html += `<div class="info-panel-section"><div class="info-panel-label">Sobre esta area</div><div class="info-panel-text">${areaLore.desc}</div></div>`;
+  }
+
+  // Pista
+  if (areaLore.pista) {
+    html += `<div class="info-panel-section"><div class="info-panel-label">Pista</div><div class="info-panel-pista">${areaLore.pista}</div></div>`;
+  }
+
+  // Razas y clases favorecidas
+  if (areaLore.pve || areaLore.pvp || areaLore.razas) {
+    html += `<div class="info-panel-section"><div class="info-panel-label">Recomendaciones</div><div class="info-panel-tags">`;
+    if (areaLore.razas) areaLore.razas.forEach(r => { html += `<span class="info-tag raza">${r}</span>`; });
+    if (areaLore.pve) areaLore.pve.forEach(c => { html += `<span class="info-tag pve">PvE: ${c}</span>`; });
+    if (areaLore.pvp) areaLore.pvp.forEach(c => { html += `<span class="info-tag pvp">PvP: ${c}</span>`; });
+    html += `</div></div>`;
+  }
+
+  // Stats del area
+  if (areaData.salas) {
+    html += `<div class="info-panel-section"><div class="info-panel-label">Estadisticas del area</div><div class="info-panel-stats">`;
+    html += `<span class="info-stat"><strong>${areaData.salas}</strong> salas</span>`;
+    if (areaData.mobs) html += `<span class="info-stat"><strong>${areaData.mobs}</strong> criaturas</span>`;
+    if (areaData.seguras) html += `<span class="info-stat"><strong>${areaData.seguras}</strong> seguras</span>`;
+    html += `</div></div>`;
+  }
+
+  panel.innerHTML = html;
+}
+
+function showAreaInfo(areaName) {
+  if (!areaName) return;
+  const key = `${currentReino}_z${currentZona}`;
+  const data = (mapData.zonas || mapData)[key];
+  if (!data) return;
+  const firstSala = data.salas.find(s => s.area === areaName);
+  if (firstSala) {
+    const areaIdx = [...new Set(data.salas.map(s => s.area).filter(a => a))].indexOf(areaName);
+    const color = areaIdx >= 0 ? AREA_COLORS[areaIdx % AREA_COLORS.length] : REINOS[currentReino].color;
+    showSalaInfo({...firstSala, nombre: areaName}, color);
+  }
+}
+
+const TERRENO_ICONS = {
+  campo: "\u{1F33E}", bosque: "\u{1F332}", montaña: "\u26F0", montania: "\u26F0", subterraneo: "\u{1F573}",
+  ciudad: "\u{1F3F0}", ruinas: "\u{1F3DA}", desierto: "\u{1F3DC}", templo: "\u{26E9}", palacio: "\u{1F451}",
+  forja: "\u{1F525}", torre: "\u{1F5FC}", abismo: "\u{1F30C}", carretera: "\u{1F6E4}", interior: "\u{1F3E0}",
+  pantano: "\u{1F40A}", volcan: "\u{1F30B}", caverna: "\u{1F573}", rio: "\u{1F30A}", playa: "\u{1F3D6}",
+};
+
+// ═══════════════════════════════════════════════════
+// LORE POR AREA (pistas, razas, clases favorecidas)
+// ═══════════════════════════════════════════════════
+
+const AREA_LORE = {
+  // ── KAEL'ZAR (Z5) ──
+  "Campamento del Grifo": { desc: "Avanzada militar humana en el borde del crater. Estandartes raidos y soldados veteranos que han visto demasiado.", pista: "El Comandante Aldwyn no duerme. Dice que si cierra los ojos, ve el trono vacio.", razas: ["Humanos"], pve: ["Guerrero","Paladin"], pvp: ["Merodeador"] },
+  "Campamento de la Hoja Marchita": { desc: "Ultimo puesto elfico antes del abismo. Tiendas de seda entre ruinas que el bosque no puede reclamar.", pista: "La Vigia Aelindra mira las ruinas con un catalejo que muestra mas de lo que deberia.", razas: ["Elfos"], pve: ["Explorador","Mago"], pvp: ["Merodeador"] },
+  "Campamento del Yunque Roto": { desc: "Fortificacion enana excavada con precision geometrica. Cada piedra tiene proposito. Cada trinchera, un plan.", pista: "El Maestro Borin golpea metal dia y noche. Dice que esta reparando algo. No dice que.", razas: ["Enanos"], pve: ["Guerrero","Clerigo"], pvp: ["Barbaro"] },
+  "Campamento de la Sangre Negra": { desc: "Empaladas, fogatas y el olor a sangre seca. Los orcos no decoran — advierten.", pista: "Grukash tiene un hacha con muescas de cien craneos. La ultima muesca es de algo que no era un craneo.", razas: ["Orcos"], pve: ["Barbaro","Guerrero"], pvp: ["Berserker"] },
+  "Campamento de las Sombras": { desc: "Un tunel que sale a la superficie por primera vez en generaciones. Los drow parpadean ante la luz — no por debilidad.", pista: "La Matriarca Zil'vrae tiene los ojos cerrados. No necesita verlos para saber donde estan todos.", razas: ["Drow"], pve: ["Merodeador","Brujo"], pvp: ["Asesino"] },
+  "Tierra de Nadie": { desc: "El espacio entre campamentos donde nadie reclama territorio y todos reclaman sangre.", pista: "Los cadaveres aqui no se descomponen. La Sombranita los preserva. O los usa.", razas: ["Todas"], pve: ["Cualquier clase"], pvp: ["Todas — zona PvP activa"] },
+  "El Bazar de los Desesperados": { desc: "El unico lugar neutral de Kael'Zar. Cinco razas comercian bajo una tregua que un goblin mantiene con astucia sobrenatural.", pista: "Rizz el Goblin estaba aqui antes que todos los demas. Nadie sabe como. Nadie pregunta.", razas: ["Todas"], pve: ["N/A — zona segura"], pvp: ["N/A — tregua"] },
+  "La Cresta del Crater": { desc: "El borde mas alto del crater. Desde aqui se ve todo: los campamentos, los anillos de ruinas, y la Llama.", pista: "Un obelisco roto flota a dos metros del suelo. Las runas estan apagadas. Pero vibran.", razas: ["Todas"], pve: ["Explorador","Cazador"], pvp: ["Arquero","Mago"] },
+  "La Avenida de los Caidos": { desc: "La calle principal del viejo Imperio. Fantasmas repiten sus ultimos momentos en loop eterno.", pista: "El mosaico del suelo muestra el mundo antes de los reinos. Solo habia uno. Las grietas estan donde ahora estan las fronteras.", razas: ["Todas"], pve: ["Clerigo","Paladin"], pvp: ["Caballero Oscuro"] },
+  "El Mercado Petrificado": { desc: "Un bazar congelado en piedra. Mercaderes con manos extendidas ofrecen productos que ya son roca.", pista: "Los mimicos aprendieron a disfrazarse de cofres sueltos. Si brilla y no esta pegado al suelo, no lo toques.", razas: ["Todas"], pve: ["Merodeador","Explorador"], pvp: ["Asesino"] },
+  "Los Barracones Rotos": { desc: "Cuarteles del ejercito imperial. Armaduras en formacion que se mueven de noche.", pista: "Las armaduras obedecen al Centurion Espectral. Si lo matas primero, las armaduras pierden coordinacion.", razas: ["Todas"], pve: ["Guerrero","Barbaro"], pvp: ["Guerrero"] },
+  "El Templo de los Cinco": { desc: "Un templo con cinco altares — uno por raza. Anterior al Imperio. Aqui se sello el primer pacto.", pista: "Cada raza puede activar su altar para un buff de +10% stats por 30 minutos. Solo funciona con sangre voluntaria.", razas: ["Todas"], pve: ["Clerigo","Paladin","Mago"], pvp: ["N/A — buff colectivo"] },
+  "La Biblioteca Quemada": { desc: "Millones de libros reducidos a ceniza que se niega a dispersarse. Algunos textos sobrevivieron.", pista: "El Archivista no esta. Su silla esta caliente. Lleva mil anos sin volver de algun lugar.", razas: ["Todas"], pve: ["Mago","Brujo","Hechicero"], pvp: ["Mago"] },
+  "Las Cloacas del Imperio": { desc: "Tuneles bajo las ruinas donde la Sombranita fluye como un rio. Los drow los usan como via rapida.", pista: "Un pozo sin fondo en la camara central respira. No es agua lo que se escucha. Es algo inhalando.", razas: ["Drow","Enanos"], pve: ["Merodeador","Explorador"], pvp: ["Asesino","Merodeador"] },
+  "El Jardin Cristalizado": { desc: "Arboles convertidos en cristal negro que vibran con un sonido que produce nauseas. Al romperlos, sangran.", pista: "Los elfos que llegan aqui lloran sin saber por que. El jardin recuerda lo que era antes de morir.", razas: ["Todas"], pve: ["Explorador","Cazador"], pvp: ["Mago"] },
+  "La Forja del Sello": { desc: "Aqui se crearon los cinco sellos. Cuatro yunques rotos. El quinto tiene grietas.", pista: "El Guardian de la Forja lleva mil anos esperando a alguien lo suficientemente fuerte para terminar lo que empezo. Es un boss de 2 fases.", razas: ["Todas"], pve: ["Grupo recomendado","Guerrero tank + Clerigo"], pvp: ["N/A — zona boss"] },
+  "El Distrito Noble": { desc: "Mansiones donde la elite del Imperio sigue cenando. Los muertos no saben que estan muertos.", pista: "Si te sentas en una silla del banquete, no te levantas. Aplica slow permanente hasta salir de la sala.", razas: ["Todas"], pve: ["Clerigo","Paladin"], pvp: ["Brujo","Caballero Oscuro"] },
+  "La Plaza del Juicio": { desc: "Donde el Emperador dictaba sentencia. El trono de juicio sigue ahi. Sentarse atrae todo.", pista: "Sentarse en el trono da vision del pasado pero atrae aggro de todos los mobs de la sala. Ojo.", razas: ["Todas"], pve: ["Tank + Healer obligatorio"], pvp: ["N/A"] },
+  "El Anfiteatro de los Gritos": { desc: "Un coliseo donde los gladiadores nunca dejaron de pelear. El publico muerto exige sangre real.", pista: "Al entrar al ruedo se activan 3 oleadas de Gladiadores Eternos. Sobrevivi las 3 y hay loot especial.", razas: ["Todas"], pve: ["Guerrero","Barbaro","Paladin"], pvp: ["Arena PvP potencial"] },
+  "La Torre del Astronomo": { desc: "Una torre que muestra cosas que no estan en ningun cielo conocido. Mirar el telescopio cambia la percepcion.", pista: "El telescopio da +20 INT por 10 min pero reduce cordura -10. Los magos lo aman. Los clerigos lo temen.", razas: ["Todas"], pve: ["Mago","Hechicero","Brujo"], pvp: ["Mago con buff de INT"] },
+  "Las Catacumbas Imperiales": { desc: "Doce sarcofagos. Once abiertos y vacios. El duodecimo vibra con el nombre de Kael'Theron.", pista: "La Verdad de la Llama esta grabada en la camara secreta. Leerla cambia todo lo que crees saber.", razas: ["Todas"], pve: ["Grupo de 3+ recomendado"], pvp: ["N/A"] },
+  "El Acueducto Roto": { desc: "Un rio de Sombranita liquida fluye donde antes habia agua. Beber mata. Tocar transforma.", pista: "Tocar el rio da +15% dano pero -20% resistencias por 10 min. Riesgo calculado.", razas: ["Todas"], pve: ["DPS con healer"], pvp: ["Builds glass cannon"] },
+  "La Sala de los Mapas": { desc: "Un mapa del mundo tallado en el suelo que muestra cosas que no existen. Un sexto continente. Ciudades bajo el agua.", pista: "El mapa muestra el futuro si la Llama no se cierra. Solo hay un desierto de cristal negro y un ojo mirando al cielo.", razas: ["Todas"], pve: ["Cualquier clase"], pvp: ["N/A"] },
+  "El Salon del Trono Vacio": { desc: "El trono mas grande del mundo con marcas de garras desde adentro. Cinco cadenas rotas.", pista: "Acercarse al trono invoca Centinelas que no se pueden evitar. Preparate antes de entrar.", razas: ["Todas"], pve: ["Tank pesado + Clerigo"], pvp: ["N/A"] },
+  "La Camara del Consejo": { desc: "Cinco sillas de piedra que murmuran en el idioma de cada raza.", pista: "Si un PJ de CADA raza se sienta simultaneamente, se abre una sala oculta con loot unico. Requiere cooperacion.", razas: ["Todas — 5 razas necesarias"], pve: ["Diplomatico"], pvp: ["N/A — cooperacion"] },
+  "Los Aposentos del Emperador": { desc: "El tiempo se detuvo aqui. La cama deshecha. El libro abierto. La copa a medio beber. Y la Sombra que espera.", pista: "La Sombra del Emperador es un boss de 3 fases. Se puede vencer por dialogo si tenes 'La Verdad de la Llama'. O por fuerza bruta.", razas: ["Todas"], pve: ["Grupo de 5+","Tank + Healer + DPS"], pvp: ["N/A — zona boss"] },
+  "El Laboratorio Prohibido": { desc: "Instrumentos que no deberian existir. Formulas en idiomas que ninguna raza reconoce.", pista: "Los Constructos Aberrantes son experimentos fallidos. Tienen patrones de ataque erraticos — no siguen logica.", razas: ["Todas"], pve: ["Mago","Explorador agil"], pvp: ["N/A"] },
+  "La Escalera Descendente": { desc: "La piedra se vuelve carne y la carne se vuelve fuego. Cada paso hacia abajo es un paso hacia la verdad.", pista: "Sin el Fragmento de Corona Imperial del boss anterior, la escalera no tiene fin. Literalmente.", razas: ["Todas"], pve: ["Resistencia a corrupcion"], pvp: ["N/A"] },
+  "La Antecamara del Abismo": { desc: "Cinco puertas, una por raza. Cada puerta requiere un Cristal de Memoria.", pista: "Sin los 5 Cristales de Memoria (uno por raza, del final de cada Z3), no se puede avanzar. Cooperacion obligatoria.", razas: ["Todas — 5 Cristales necesarios"], pve: ["Grupo multirracial"], pvp: ["Desactivado en Anillo 5"] },
+  "El Puente de Obsidiana": { desc: "Un puente sobre un vacio que no tiene fondo. La Llama arde en todas las direcciones.", pista: "Check de WIS cada sala. Si falla, no avanzas ese turno. Los clerigos y paladines tienen ventaja natural.", razas: ["Todas"], pve: ["Clerigo","Paladin","builds WIS"], pvp: ["Desactivado"] },
+  "La Camara de los Sellos": { desc: "Cinco pedestales. Cinco Cristales. La puerta al boss final.", pista: "Colocar los 5 Cristales simultaneamente (5 PJs, uno por raza) desbloquea el Corazon de la Llama.", razas: ["Todas — 5 razas obligatorio"], pve: ["Raid completo"], pvp: ["Desactivado"] },
+  "El Corazon de la Llama": { desc: "La Llama arde en el centro. Dentro, una silueta. Kael'Theron. Mil anos ardiendo. Esperando.", pista: "Boss final de 3 fases. Fase 1: guerrero. Fase 2: lava AoE + ecos de bosses Z4. Fase 3: tentaculos + pedestales. Grupo de 5+ obligatorio.", razas: ["Todas"], pve: ["Raid: Tank + Healer + 3 DPS minimo"], pvp: ["Desactivado"] },
+};
 
 document.addEventListener("DOMContentLoaded", init);
   </script>
