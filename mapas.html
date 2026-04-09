@@ -87,6 +87,16 @@
       .reino-btn { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
       .mapa-grid { max-height: 400px; }
     }
+
+    /* Editor mode */
+    .editor-bar { display: none; background: rgba(200,134,10,0.15); border: 1px solid var(--dorado); border-radius: 6px; padding: 0.5rem 1rem; margin-bottom: 1rem; align-items: center; gap: 1rem; }
+    .editor-bar.active { display: flex; }
+    .editor-bar span { font-size: 0.85rem; color: var(--dorado); }
+    .editor-btn { padding: 0.4rem 0.8rem; border: 1px solid var(--dorado); border-radius: 4px; background: rgba(200,134,10,0.2); color: #fff; cursor: pointer; font-size: 0.8rem; transition: all 0.2s; }
+    .editor-btn:hover { background: rgba(200,134,10,0.4); }
+    .sala-node.dragging { opacity: 0.6; z-index: 100; cursor: grabbing; }
+    .editor-mode .sala-node { cursor: grab; }
+    .editor-mode .sala-node:hover { transform: scale(2.2); box-shadow: 0 0 8px rgba(200,134,10,0.6); }
   </style>
 </head>
 <body>
@@ -114,6 +124,12 @@
   </div>
 
   <div class="mapas-container">
+    <div class="editor-bar" id="editorBar">
+      <span>MODO EDITOR</span>
+      <button class="editor-btn" onclick="guardarPosiciones()">Guardar posiciones</button>
+      <button class="editor-btn" onclick="resetPosiciones()">Reset auto-layout</button>
+      <span id="editorStatus" style="font-size:0.75rem;opacity:0.6;"></span>
+    </div>
     <div class="reino-selector" id="reinoSelector"></div>
     <div class="zona-tabs" id="zonaTabs"></div>
     <div id="zonaContent"></div>
@@ -397,13 +413,34 @@ function renderMapNodes(data, areas) {
   const idMap = {};
   salas.forEach(s => { idMap[s.id] = s; });
 
-  // Layout por BFS desde la primera sala
+  // Intentar usar posiciones guardadas del editor
+  const zonaKey = `${currentReino}_z${currentZona}`;
+  const saved = getSavedPositions(zonaKey);
+
   const positions = {};
   const visited = new Set();
   const queue = [];
   const SPACING = 35;
 
-  // Empezar desde la primera sala
+  if (saved && Object.keys(saved).length > 0) {
+    // Usar posiciones guardadas
+    salas.forEach(s => {
+      if (saved[s.id]) {
+        positions[s.id] = { x: saved[s.id].x, y: saved[s.id].y };
+      }
+    });
+    // Las que no tienen posición guardada, auto-layout
+    salas.forEach(s => {
+      if (!positions[s.id]) {
+        positions[s.id] = { x: Math.random() * 400 + 30, y: Math.random() * 400 + 30 };
+      }
+    });
+  } else {
+    // Auto-layout por BFS
+  }
+
+  // Empezar desde la primera sala (solo si no hay posiciones guardadas)
+  if (!saved || Object.keys(saved).length === 0) {
   const start = salas[0];
   positions[start.id] = { x: 0, y: 0 };
   visited.add(start.id);
@@ -466,6 +503,7 @@ function renderMapNodes(data, areas) {
     p.x = (p.x - minX) * SPACING + 30;
     p.y = (p.y - minY) * SPACING + 30;
   });
+  } // fin del bloque auto-layout
 
   const width = (maxX - minX) * SPACING + 60;
   const height = (maxY - minY) * SPACING + 60;
@@ -512,12 +550,18 @@ function renderMapNodes(data, areas) {
     node.style.left = pos.x + "px";
     node.style.top = pos.y + "px";
     node.style.background = color;
+    node.dataset.salaId = sala.id;
 
     node.addEventListener("mouseenter", () => showSalaInfo(sala, color));
-    node.addEventListener("click", () => showAreaInfo(sala.area));
+    if (!editorMode) {
+      node.addEventListener("click", () => showAreaInfo(sala.area));
+    }
 
     canvas.appendChild(node);
   });
+
+  // Activar drag en modo editor
+  if (editorMode) enableDrag(canvas);
 }
 
 // ═══════════════════════════════════════════════════
@@ -633,7 +677,147 @@ const AREA_LORE = {
   "El Corazon de la Llama": { desc: "La Llama arde en el centro. Dentro, una silueta. Kael'Theron. Mil anos ardiendo. Esperando.", pista: "Boss final de 3 fases. Fase 1: guerrero. Fase 2: lava AoE + ecos de bosses Z4. Fase 3: tentaculos + pedestales. Grupo de 5+ obligatorio.", razas: ["Todas"], pve: ["Raid: Tank + Healer + 3 DPS minimo"], pvp: ["Desactivado"] },
 };
 
-document.addEventListener("DOMContentLoaded", init);
+// ═══════════════════════════════════════════════════
+// MODO EDITOR — solo accesible con ?editor=zirathar
+// ═══════════════════════════════════════════════════
+
+const EDITOR_KEY = "zirathar";
+let editorMode = false;
+let savedPositions = {};  // {zona_key: {sala_id: {x, y}}}
+let dragState = null;
+
+function initEditor() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get("editor") !== EDITOR_KEY) return;
+
+  editorMode = true;
+  document.getElementById("editorBar").classList.add("active");
+
+  // Cargar posiciones guardadas de localStorage
+  try {
+    savedPositions = JSON.parse(localStorage.getItem("zirathar_map_positions") || "{}");
+  } catch(e) { savedPositions = {}; }
+}
+
+function getSavedPositions(zonaKey) {
+  return savedPositions[zonaKey] || null;
+}
+
+function enableDrag(canvas) {
+  if (!editorMode) return;
+  document.body.classList.add("editor-mode");
+
+  canvas.querySelectorAll(".sala-node").forEach(node => {
+    node.addEventListener("mousedown", (e) => {
+      e.preventDefault();
+      dragState = {
+        node: node,
+        salaId: node.dataset.salaId,
+        startX: e.clientX - parseInt(node.style.left),
+        startY: e.clientY - parseInt(node.style.top),
+      };
+      node.classList.add("dragging");
+    });
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (!dragState) return;
+    const nx = e.clientX - dragState.startX;
+    const ny = e.clientY - dragState.startY;
+    dragState.node.style.left = nx + "px";
+    dragState.node.style.top = ny + "px";
+  });
+
+  document.addEventListener("mouseup", () => {
+    if (!dragState) return;
+    dragState.node.classList.remove("dragging");
+
+    // Guardar posición
+    const key = `${currentReino}_z${currentZona}`;
+    if (!savedPositions[key]) savedPositions[key] = {};
+    savedPositions[key][dragState.salaId] = {
+      x: parseInt(dragState.node.style.left),
+      y: parseInt(dragState.node.style.top),
+    };
+
+    // Redibujar líneas
+    redrawLines();
+    dragState = null;
+  });
+}
+
+function redrawLines() {
+  const canvas = document.getElementById("mapaCanvas");
+  if (!canvas) return;
+
+  // Borrar líneas viejas
+  canvas.querySelectorAll(".exit-line").forEach(l => l.remove());
+
+  // Obtener posiciones actuales de los nodos
+  const nodes = {};
+  canvas.querySelectorAll(".sala-node").forEach(n => {
+    nodes[n.dataset.salaId] = {
+      x: parseInt(n.style.left),
+      y: parseInt(n.style.top),
+    };
+  });
+
+  // Redibujar
+  const key = `${currentReino}_z${currentZona}`;
+  const data = (mapData.zonas || mapData)[key];
+  if (!data) return;
+
+  data.salas.forEach(sala => {
+    const pos = nodes[sala.id];
+    if (!pos) return;
+    sala.exits.forEach(exit => {
+      const destPos = nodes[exit.dest_id];
+      if (!destPos) return;
+
+      const dx = destPos.x - pos.x;
+      const dy = destPos.y - pos.y;
+      const len = Math.sqrt(dx*dx + dy*dy);
+      const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+      const line = document.createElement("div");
+      line.className = "exit-line";
+      line.style.left = (pos.x + 7) + "px";
+      line.style.top = (pos.y + 7) + "px";
+      line.style.width = len + "px";
+      line.style.height = "1px";
+      line.style.transformOrigin = "0 0";
+      line.style.transform = `rotate(${angle}deg)`;
+      canvas.appendChild(line);
+    });
+  });
+}
+
+function guardarPosiciones() {
+  localStorage.setItem("zirathar_map_positions", JSON.stringify(savedPositions));
+
+  // Generar JSON descargable para subir al repo
+  const blob = new Blob([JSON.stringify(savedPositions, null, 2)], {type: "application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "map_positions.json";
+  a.click();
+  URL.revokeObjectURL(url);
+
+  document.getElementById("editorStatus").textContent = "Guardado en localStorage + descargado JSON";
+  setTimeout(() => { document.getElementById("editorStatus").textContent = ""; }, 3000);
+}
+
+function resetPosiciones() {
+  const key = `${currentReino}_z${currentZona}`;
+  delete savedPositions[key];
+  localStorage.setItem("zirathar_map_positions", JSON.stringify(savedPositions));
+  renderZona();  // Re-render con auto-layout
+  document.getElementById("editorStatus").textContent = "Reset a auto-layout";
+  setTimeout(() => { document.getElementById("editorStatus").textContent = ""; }, 3000);
+}
+
+document.addEventListener("DOMContentLoaded", () => { initEditor(); init(); });
   </script>
 </body>
 </html>
