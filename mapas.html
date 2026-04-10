@@ -422,25 +422,19 @@ function renderMapNodes(data, areas) {
   const queue = [];
   const SPACING = 35;
 
-  if (saved && Object.keys(saved).length > 0) {
-    // Usar posiciones guardadas
+  const useSaved = saved && Object.keys(saved).length > 0;
+
+  if (useSaved) {
+    // Usar posiciones guardadas del editor
     salas.forEach(s => {
       if (saved[s.id]) {
         positions[s.id] = { x: saved[s.id].x, y: saved[s.id].y };
-      }
-    });
-    // Las que no tienen posición guardada, auto-layout
-    salas.forEach(s => {
-      if (!positions[s.id]) {
+      } else {
         positions[s.id] = { x: Math.random() * 400 + 30, y: Math.random() * 400 + 30 };
       }
     });
   } else {
     // Auto-layout por BFS
-  }
-
-  // Empezar desde la primera sala (solo si no hay posiciones guardadas)
-  if (!saved || Object.keys(saved).length === 0) {
   const start = salas[0];
   positions[start.id] = { x: 0, y: 0 };
   visited.add(start.id);
@@ -503,7 +497,7 @@ function renderMapNodes(data, areas) {
     p.x = (p.x - minX) * SPACING + 30;
     p.y = (p.y - minY) * SPACING + 30;
   });
-  } // fin del bloque auto-layout
+  } // fin del bloque else (auto-layout)
 
   const width = (maxX - minX) * SPACING + 60;
   const height = (maxY - minY) * SPACING + 60;
