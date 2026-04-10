@@ -435,72 +435,68 @@ function renderMapNodes(data, areas) {
     });
   } else {
     // Auto-layout por BFS
-  const start = salas[0];
-  positions[start.id] = { x: 0, y: 0 };
-  visited.add(start.id);
-  queue.push(start);
+    const start = salas[0];
+    positions[start.id] = { x: 0, y: 0 };
+    visited.add(start.id);
+    queue.push(start);
 
-  const DIR_OFFSETS = {
-    norte: {x:0,y:-1}, sur: {x:0,y:1}, este: {x:1,y:0}, oeste: {x:-1,y:0},
-    noreste: {x:1,y:-1}, noroeste: {x:-1,y:-1}, sureste: {x:1,y:1}, suroeste: {x:-1,y:1},
-    arriba: {x:0,y:-1}, abajo: {x:0,y:1},
-    n:{x:0,y:-1}, s:{x:0,y:1}, e:{x:1,y:0}, o:{x:-1,y:0},
-    ne:{x:1,y:-1}, no:{x:-1,y:-1}, se:{x:1,y:1}, so:{x:-1,y:1},
-    ar:{x:0,y:-1}, ab:{x:0,y:1},
-  };
+    const DIR_OFFSETS = {
+      norte: {x:0,y:-1}, sur: {x:0,y:1}, este: {x:1,y:0}, oeste: {x:-1,y:0},
+      noreste: {x:1,y:-1}, noroeste: {x:-1,y:-1}, sureste: {x:1,y:1}, suroeste: {x:-1,y:1},
+      arriba: {x:0,y:-1}, abajo: {x:0,y:1},
+      n:{x:0,y:-1}, s:{x:0,y:1}, e:{x:1,y:0}, o:{x:-1,y:0},
+      ne:{x:1,y:-1}, no:{x:-1,y:-1}, se:{x:1,y:1}, so:{x:-1,y:1},
+      ar:{x:0,y:-1}, ab:{x:0,y:1},
+    };
 
-  while (queue.length > 0) {
-    const sala = queue.shift();
-    const pos = positions[sala.id];
-
-    for (const exit of sala.exits) {
-      if (visited.has(exit.dest_id)) continue;
-      if (!idMap[exit.dest_id]) continue;
-
-      const offset = DIR_OFFSETS[exit.dir] || {x:1,y:0};
-      let nx = pos.x + offset.x;
-      let ny = pos.y + offset.y;
-
-      // Evitar colisiones
-      const posKey = `${nx},${ny}`;
-      let tries = 0;
-      while (Object.values(positions).some(p => p.x === nx && p.y === ny) && tries < 8) {
-        nx += (Math.random() > 0.5 ? 1 : -1);
-        ny += (Math.random() > 0.5 ? 1 : -1);
-        tries++;
+    while (queue.length > 0) {
+      const sala = queue.shift();
+      const pos = positions[sala.id];
+      for (const exit of sala.exits) {
+        if (visited.has(exit.dest_id)) continue;
+        if (!idMap[exit.dest_id]) continue;
+        const offset = DIR_OFFSETS[exit.dir] || {x:1,y:0};
+        let nx = pos.x + offset.x;
+        let ny = pos.y + offset.y;
+        let tries = 0;
+        while (Object.values(positions).some(p => p.x === nx && p.y === ny) && tries < 8) {
+          nx += (Math.random() > 0.5 ? 1 : -1);
+          ny += (Math.random() > 0.5 ? 1 : -1);
+          tries++;
+        }
+        positions[exit.dest_id] = { x: nx, y: ny };
+        visited.add(exit.dest_id);
+        queue.push(idMap[exit.dest_id]);
       }
-
-      positions[exit.dest_id] = { x: nx, y: ny };
-      visited.add(exit.dest_id);
-      queue.push(idMap[exit.dest_id]);
     }
+
+    // Salas sin posicion (desconectadas)
+    let extraY = Math.max(...Object.values(positions).map(p => p.y), 0) + 2;
+    let extraX = 0;
+    salas.forEach(s => {
+      if (!positions[s.id]) {
+        positions[s.id] = { x: extraX, y: extraY };
+        extraX++;
+        if (extraX > 10) { extraX = 0; extraY++; }
+      }
+    });
+
+    // Normalizar posiciones
+    const minX = Math.min(...Object.values(positions).map(p => p.x));
+    const minY = Math.min(...Object.values(positions).map(p => p.y));
+    const maxX = Math.max(...Object.values(positions).map(p => p.x));
+    const maxY = Math.max(...Object.values(positions).map(p => p.y));
+    Object.values(positions).forEach(p => {
+      p.x = (p.x - minX) * SPACING + 30;
+      p.y = (p.y - minY) * SPACING + 30;
+    });
   }
 
-  // Salas sin posicion (desconectadas) — colocar abajo
-  let extraY = Math.max(...Object.values(positions).map(p => p.y), 0) + 2;
-  let extraX = 0;
-  salas.forEach(s => {
-    if (!positions[s.id]) {
-      positions[s.id] = { x: extraX, y: extraY };
-      extraX++;
-      if (extraX > 10) { extraX = 0; extraY++; }
-    }
-  });
-
-  // Normalizar posiciones
-  const minX = Math.min(...Object.values(positions).map(p => p.x));
-  const minY = Math.min(...Object.values(positions).map(p => p.y));
-  const maxX = Math.max(...Object.values(positions).map(p => p.x));
-  const maxY = Math.max(...Object.values(positions).map(p => p.y));
-
-  Object.values(positions).forEach(p => {
-    p.x = (p.x - minX) * SPACING + 30;
-    p.y = (p.y - minY) * SPACING + 30;
-  });
-  } // fin del bloque else (auto-layout)
-
-  const width = (maxX - minX) * SPACING + 60;
-  const height = (maxY - minY) * SPACING + 60;
+  // Calcular dimensiones del canvas
+  const allX = Object.values(positions).map(p => p.x);
+  const allY = Object.values(positions).map(p => p.y);
+  const width = (Math.max(...allX) - Math.min(...allX)) + 60;
+  const height = (Math.max(...allY) - Math.min(...allY)) + 60;
   canvas.style.width = width + "px";
   canvas.style.height = height + "px";
 
